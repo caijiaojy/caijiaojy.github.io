@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>比亚迪股份有限公司 | 2025 年第三季度报告 - 可视化摘要</title>
+  <meta name="description" content="比亚迪股份有限公司（002594）2025 年第三季度报告可视化摘要，基于 TailwindCSS、GSAP 与 Framer Motion 的动态财报页面，采用 Bemto Grid 布局。"/>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+SC:wght@400;600;900&display=swap" rel="stylesheet" />
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            byd: {
+              red: '#d7000f',
+              redSoft: '#ff2d3b',
+              dark: '#0b0b0f',
+              dark2: '#0f1115'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter','Noto Sans SC','system-ui','-apple-system','Segoe UI','PingFang SC','Microsoft YaHei','Arial','sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root{
+      --byd-red: #d7000f;
+      --byd-red-soft: #ff2d3b;
+      --bg-dark: #0b0b0f;
+      --bg-panel: #101217;
+      --ink-weak: #94a3b8;
+      --ink: #e5e7eb;
+    }
+    html, body { background: var(--bg-dark); color: #e6e7ec; }
+    .hero-gradient{
+      background:
+        radial-gradient(1200px 600px at 80% -10%, rgba(215,0,15,0.18), transparent 60%),
+        radial-gradient(800px 400px at -10% 10%, rgba(255,45,59,0.1), transparent 60%),
+        linear-gradient(180deg, #0b0b0f 0%, #0f1115 60%, #0b0b0f 100%);
+    }
+    /* Bemto Grid - minimal responsive grid system (BEM-styled) */
+    .b-grid{ display:grid; gap: 1rem; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    @media (min-width: 768px){ .b-grid{ grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1.25rem; } }
+    .b-grid__item{ grid-column: span 4 / span 4; }
+    @media (min-width: 768px){
+      .b-grid__item--md-12{ grid-column: span 12 / span 12; }
+      .b-grid__item--md-6{ grid-column: span 6 / span 6; }
+      .b-grid__item--md-4{ grid-column: span 4 / span 4; }
+      .b-grid__item--md-3{ grid-column: span 3 / span 3; }
+      .b-grid__item--md-8{ grid-column: span 8 / span 8; }
+      .b-grid__item--md-5{ grid-column: span 5 / span 5; }
+      .b-grid__item--md-7{ grid-column: span 7 / span 7; }
+    }
+    @media (min-width: 1024px){
+      .b-grid__item--lg-3{ grid-column: span 3 / span 3; }
+      .b-grid__item--lg-4{ grid-column: span 4 / span 4; }
+      .b-grid__item--lg-5{ grid-column: span 5 / span 5; }
+      .b-grid__item--lg-6{ grid-column: span 6 / span 6; }
+      .b-grid__item--lg-7{ grid-column: span 7 / span 7; }
+      .b-grid__item--lg-8{ grid-column: span 8 / span 8; }
+      .b-grid__item--lg-9{ grid-column: span 9 / span 9; }
+      .b-grid__item--lg-12{ grid-column: span 12 / span 12; }
+    }
+    /* Cards and panels */
+    .panel{
+      background: var(--bg-panel);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      position: relative;
+      overflow: hidden;
+    }
+    .panel--glass{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      backdrop-filter: blur(6px);
+    }
+    .panel-ring{
+      box-shadow: 0 0 0 1px rgba(215,0,15,0.28) inset;
+    }
+    .kpi{
+      display:flex; flex-direction: column; gap:.5rem;
+      padding: 1.25rem;
+    }
+    .kpi .label{ color: var(--ink-weak); font-size:.8rem; letter-spacing:.04em; text-transform: uppercase;}
+    .kpi .value{
+      font-weight: 900; line-height: 1.05;
+      font-family: Inter, 'Noto Sans SC', system-ui;
+    }
+    .kpi .sub{ color: var(--ink-weak); font-size:.85rem; }
+    .trend-badge{
+      font-size:.75rem; padding:.25rem .5rem; border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+    }
+    .trend-badge--up{ color:#34d399; box-shadow: 0 0 0 1px rgba(52,211,153,0.25) inset; }
+    .trend-badge--down{ color:#f87171; box-shadow: 0 0 0 1px rgba(248,113,113,0.25) inset; }
+    /* Chart bars */
+    .bar-track{
+      width:100%; height: 14px; border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      position: relative; overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .bar-fill{
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, rgba(215,0,15,0.8), rgba(255,45,59,0.8));
+      border-radius: 10px;
+      box-shadow: 0 0 0 1px rgba(215,0,15,0.25) inset, 0 4px 12px rgba(215,0,15,0.25);
+      transform-origin: left center;
+    }
+    .bar-fill--neg{
+      background: linear-gradient(90deg, rgba(215,0,15,0.4), rgba(215,0,15,0.2));
+      transform-origin: right center;
+    }
+    .bar-legend{
+      display:flex; justify-content: space-between; font-size:.8rem; color: var(--ink-weak); margin-top:.35rem;
+    }
+    /* Footnote style for all charts */
+    .chart-footnote{
+      margin-top: .75rem;
+      font-size: .78rem; color: #a8b1c1;
+      border-left: 2px solid rgba(215,0,15,.45);
+      padding-left: .6rem;
+    }
+    /* Section headings */
+    .h-beam{
+      display:flex; align-items:center; gap:.75rem;
+    }
+    .h-beam .beam{
+      width: 12px; height: 28px; background: linear-gradient(180deg, rgba(215,0,15,.85), rgba(255,45,59,.5)); border-radius: 2px;
+      box-shadow: 0 2px 10px rgba(215,0,15,.35);
+    }
+    .h-zh{
+      font-size: clamp(1.4rem, 2vw + 1rem, 2.25rem); font-weight: 900; letter-spacing: .01em;
+    }
+    .h-en{
+      color: var(--ink-weak); text-transform: uppercase; font-size:.8rem; letter-spacing:.18em;
+    }
+    /* Simple icon */
+    .i-chip{ width:14px; height:14px; border-radius: 3px; background: rgba(215,0,15,.85); box-shadow: 0 0 0 1px rgba(215,0,15,.35) inset; }
+    /* Table style (scrollable) */
+    .data-table{
+      width:100%; border-collapse: collapse; font-size:.9rem;
+    }
+    .data-table thead th{
+      text-align:left; color:#cbd5e1; font-weight:600; border-bottom:1px solid rgba(255,255,255,.08); padding:.75rem .5rem;
+    }
+    .data-table tbody td{
+      border-bottom:1px dashed rgba(255,255,255,.06); padding:.65rem .5rem; color:#e5e7eb;
+    }
+    .data-table tbody tr:hover{ background: rgba(255,255,255,.03); }
+    .muted{ color: var(--ink-weak); }
+    .btn{
+      appearance:none; border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.03);
+      color:#e6e7ec; font-weight:600; padding:.6rem .9rem; border-radius: .65rem;
+    }
+    .btn:hover{ border-color: rgba(215,0,15,.45); box-shadow: 0 0 0 1px rgba(215,0,15,.35) inset; }
+    details[open] summary .rot-90{ transform: rotate(90deg); }
+    summary{ list-style: none; cursor: pointer; }
+    summary::-webkit-details-marker{ display:none; }
+  </style>
+</head>
+<body class="font-sans">
+  <!-- HERO (Framer Motion React) -->
+  <header class="hero-gradient relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 pt-12 pb-10 md:pt-16 md:pb-14">
+      <div id="framer-root"></div>
+      <!-- Static fallback for no-JS -->
+      <noscript>
+        <div class="flex flex-col gap-3">
+          <div class="text-byd-red text-sm tracking-[.2em] uppercase">BYD Company Limited | 002594</div>
+          <h1 class="text-4xl md:text-6xl font-black leading-[1.02]">
+            比亚迪 2025 年第三季度报告
+          </h1>
+          <div class="text-slate-300">Q3 2025 Report (Unaudited)</div>
+        </div>
+      </noscript>
+    </div>
+  </header>
+
+  <!-- TOP KPI GRID -->
+  <main class="max-w-7xl mx-auto px-6 pb-16 -mt-8">
+    <section class="b-grid">
+      <!-- KPI: Q3 Revenue -->
+      <article class="b-grid__item b-grid__item--md-3 panel panel--glass panel-ring kpi">
+        <div class="label">本季度营业收入 · Revenue (Q3)</div>
+        <div class="flex items-end justify-between gap-2">
+          <div class="value text-3xl md:text-4xl" data-count="194.984598" data-format="currency-b">¥194.98B</div>
+          <div class="trend-badge trend-badge--down">YoY -3.05%</div>
+        </div>
+        <div class="sub">单位：人民币</div>
+      </article>
+      <!-- KPI: YTD Revenue -->
+      <article class="b-grid__item b-grid__item--md-3 panel panel--glass panel-ring kpi">
+        <div class="label">年初至今营业收入 · Revenue (YTD)</div>
+        <div class="flex items-end justify-between gap-2">
+          <div class="value text-3xl md:text-4xl" data-count="566.265546" data-format="currency-b">¥566.27B</div>
+          <div class="trend-badge">YoY +12.75%</div>
+        </div>
+        <div class="sub">2025.01-09</div>
+      </article>
+      <!-- KPI: Q3 Net Profit -->
+      <article class="b-grid__item b-grid__item--md-3 panel panel--glass panel-ring kpi">
+        <div class="label">本季度归母净利润 · Net Profit (Q3)</div>
+        <div class="flex items-end justify-between gap-2">
+          <div class="value text-3xl md:text-4xl" data-count="7.82264" data-format="currency-b">¥7.82B</div>
+          <div class="trend-badge trend-badge--down">YoY -32.60%</div>
+        </div>
+        <div class="sub">扣非 Q3：¥6.89B（-36.65%）</div>
+      </article>
+      <!-- KPI: YTD Net Profit -->
+      <article class="b-grid__item b-grid__item--md-3 panel panel--glass panel-ring kpi">
+        <div class="label">年初至今归母净利润 · Net Profit (YTD)</div>
+        <div class="flex items-end justify-between gap-2">
+          <div class="value text-3xl md:text-4xl" data-count="23.333173" data-format="currency-b">¥23.33B</div>
+          <div class="trend-badge trend-badge--down">YoY -7.55%</div>
+        </div>
+        <div class="sub">扣非 YTD：¥20.49B（-11.65%）</div>
+      </article>
+
+      <!-- KPI: EPS -->
+      <article class="b-grid__item b-grid__item--md-4 panel panel--glass panel-ring kpi">
+        <div class="label">每股收益 · EPS</div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-sm text-slate-300">基本/稀释 (Q3)</div>
+            <div class="value text-3xl md:text-4xl">0.85</div>
+            <div class="trend-badge trend-badge--down inline-block mt-2">YoY -36.09%</div>
+          </div>
+          <div>
+            <div class="text-sm text-slate-300">基本/稀释 (YTD)</div>
+            <div class="value text-3xl md:text-4xl">2.56</div>
+            <div class="trend-badge trend-badge--down inline-block mt-2">YoY -11.42%</div>
+          </div>
+        </div>
+        <div class="sub">注：2025年7月实施送红股与转增后股本调整。</div>
+      </article>
+
+      <!-- KPI: Operating CF -->
+      <article class="b-grid__item b-grid__item--md-4 panel panel--glass panel-ring kpi">
+        <div class="label">经营活动现金流净额 · Operating CF (YTD)</div>
+        <div class="flex items-end justify-between gap-2">
+          <div class="value text-3xl md:text-4xl" data-count="40.845498" data-format="currency-b">¥40.85B</div>
+          <div class="trend-badge trend-badge--down">YoY -27.42%</div>
+        </div>
+        <div class="sub">期末现金及等价物：¥117.47B</div>
+      </article>
+
+      <!-- KPI: ROE and Equity/Assets -->
+      <article class="b-grid__item b-grid__item--md-4 panel panel--glass panel-ring kpi">
+        <div class="label">资产与回报 · Assets & ROE</div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-sm text-slate-300">总资产 (期末)</div>
+            <div class="value text-2xl md:text-3xl" data-count="901.925091" data-format="currency-b">¥901.93B</div>
+          </div>
+          <div>
+            <div class="text-sm text-slate-300">归母权益 (期末)</div>
+            <div class="value text-2xl md:text-3xl" data-count="245.515455" data-format="currency-b">¥245.52B</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 mt-2">
+          <span class="trend-badge">ROE (YTD) 10.83%</span>
+          <span class="trend-badge trend-badge--down">ΔYoY -6.32pp</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- DATA VIZ: Bars -->
+    <section class="mt-12 b-grid">
+      <div class="b-grid__item b-grid__item--md-6 panel panel--glass panel-ring p-5">
+        <div class="h-beam mb-4">
+          <div class="beam"></div>
+          <div>
+            <div class="h-zh">收入与净利（YTD）</div>
+            <div class="h-en">Revenue vs Net Profit, YTD</div>
+          </div>
+        </div>
+        <div data-bar-group data-bar-max="600">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2"><span class="i-chip"></span><span>营业收入</span></div>
+            <div class="muted" data-count="566.265546" data-format="currency-b">¥566.27B</div>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-bar-value="566.265546"></div></div>
+
+          <div class="flex items-center justify-between mb-2 mt-4">
+            <div class="flex items-center gap-2"><span class="i-chip"></span><span>归母净利润</span></div>
+            <div class="muted" data-count="23.333173" data-format="currency-b">¥23.33B</div>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-bar-value="23.333173"></div></div>
+        </div>
+        <div class="chart-footnote">注：同比口径基于公司披露；单位人民币（十亿元）。</div>
+      </div>
+
+      <div class="b-grid__item b-grid__item--md-6 panel panel--glass panel-ring p-5">
+        <div class="h-beam mb-4">
+          <div class="beam"></div>
+          <div>
+            <div class="h-zh">资产负债结构（期末）</div>
+            <div class="h-en">Balance Sheet Snapshot</div>
+          </div>
+        </div>
+        <div data-bar-group data-bar-max="920">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2"><span class="i-chip"></span><span>总资产</span></div>
+            <div class="muted" data-count="901.925091" data-format="currency-b">¥901.93B</div>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-bar-value="901.925091"></div></div>
+
+          <div class="flex items-center justify-between mb-2 mt-4">
+            <div class="flex items-center gap-2"><span class="i-chip"></span><span>负债合计</span></div>
+            <div class="muted" data-count="643.526696" data-format="currency-b">¥643.53B</div>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-bar-value="643.526696"></div></div>
+
+          <div class="flex items-center justify-between mb-2 mt-4">
+            <div class="flex items-center gap-2"><span class="i-chip"></span><span>所有者权益</span></div>
+            <div class="muted" data-count="258.398395" data-format="currency-b">¥258.40B</div>
+          </div>
+          <div class="bar-track"><div class="bar-fill" data-bar-value="258.398395"></div></div>
+        </div>
+        <div class="chart-footnote">注：数据为 2025-09-30；权益含少数股东权益。</div>
+      </div>
+
+      <div class="b-grid__item b-grid__item--md-6 panel panel--glass panel-ring p-5">
+        <div class="h-beam mb-4">
+          <div class="beam"></div>
+          <div>
+            <div class="h-zh">费用与收益（YTD）</div>
+            <div class="h-en">R&amp;D vs Financial Expense</div>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between">
+            <div class="text-slate-300">研发费用</div>
+            <div class="trend-badge">YoY +31.30%</div>
+          </div>
+          <div data-bar-group data-bar-max="50">
+            <div class="bar-track mt-2"><div class="bar-fill" data-bar-value="43.748447"></div></div>
+            <div class="bar-legend"><span>¥43.75B</span><span>2025.01-09</span></div>
+          </div>
+
+          <div class="flex items-center justify-between mt-5">
+            <div class="text-slate-300">财务费用</div>
+            <div class="trend-badge">汇兑收益</div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 items-center">
+            <div>
+              <div class="bar-track mt-2 relative">
+                <div class="bar-fill bar-fill--neg absolute right-0" data-bar-value="-2.935816" data-bar-maxabs="5"></div>
+              </div>
+              <div class="bar-legend"><span>-¥2.94B</span><span>2025.01-09</span></div>
+            </div>
+            <div class="muted text-sm">
+              与上年同期（¥1.03B费用）相比，主要为本期汇兑收益，上年同期为汇兑损失。
+            </div>
+          </div>
+        </div>
+        <div class="chart-footnote">注：负数表示收益（费用为负）；单位人民币。</div>
+      </div>
+
+      <div class="b-grid__item b-grid__item--md-6 panel panel--glass panel-ring p-5">
+        <div class="h-beam mb-4">
+          <div class="beam"></div>
+          <div>
+            <div class="h-zh">现金流三大活动（YTD）</div>
+            <div class="h-en">Cash Flows by Activity</div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <div class="flex items-center justify-between">
+              <span>经营活动</span><span class="muted" data-count="40.845498" data-format="currency-b">¥40.85B</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" data-bar-value="40.845498" data-bar-max="130"></div></div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between">
+              <span>投资活动</span><span class="muted" data-count="-127.571344" data-format="currency-b">-¥127.57B</span>
+            </div>
+            <div class="bar-track relative"><div class="bar-fill bar-fill--neg absolute right-0" data-bar-value="-127.571344" data-bar-maxabs="130"></div></div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between">
+              <span>筹资活动</span><span class="muted" data-count="101.662706" data-format="currency-b">¥101.66B</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" data-bar-value="101.662706" data-bar-max="130"></div></div>
+          </div>
+        </div>
+        <div class="chart-footnote">注：投资现金流净流出扩大，主要因购建固定资产等投资支出增加；筹资现金流大幅转正，系配售 H 股、借款与发债增加。</div>
+      </div>
+    </section>
+
+    <!-- Non-recurring items -->
+    <section class="mt-12 b-grid">
+      <div class="b-grid__item b-grid__item--md-7 panel panel--glass panel-ring p-6">
+        <div class="h-beam mb-4">
+          <div class="beam"></div>
+          <div>
+            <div class="h-zh">非经常性损益</div>
+            <div class="h-en">Non-recurring Items</div>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="data-table min-w-[640px]">
+            <thead>
+              <tr>
+                <th>项目</th>
+                <th>Q3 金额</th>
+                <th>YTD 金额</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>非流动资产处置损益</td>
+                <td>-¥0.306B</td>
+                <td>-¥0.704B</td>
+                <td class="muted">资产处置损益</td>
+              </tr>
+              <tr>
+                <td>计入当期损益的政府补助</td>
+                <td>¥0.981B</td>
+                <td>¥2.261B</td>
+                <td class="muted">主要与汽车及相关产品</td>
+              </tr>
+              <tr>
+                <td>应收款项减值准备转回</td>
+                <td>¥0.000B</td>
+                <td>¥0.025B</td>
+                <td class="muted">单项测试转回</td>
+              </tr>
+              <tr>
+                <td>公允价值变动与处置</td>
+                <td>¥0.781B</td>
+                <td>¥1.606B</td>
+                <td class="muted">交易性金融资产/负债</td>
+              </tr>
+              <tr>
+                <td>其他营业外收支</td>
+                <td>-¥0.103B</td>
+                <td>¥0.543B</td>
+                <td class="muted">其他及清账收益等</td>
+              </tr>
+              <tr>
+                <td>减：所得税影响额</td>
+                <td>¥0.212B</td>
+                <td>¥0.627B</td>
+                <td class="muted">税项影响</td>
+              </tr>
+              <tr>
+                <td>减：少数股东权益影响</td>
+                <td>¥0.209B</td>
+                <td>¥0.262B</td>
+                <td class="muted">税后</td>
+              </tr>
+              <tr>
+                <td class="font-semibold">合计</td>
+                <td class="font-semibold">¥0.932B</td>
+                <td class="font-semibold">¥2.843B</td>
+                <td class="muted">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="chart-footnote">注：公司不存在将非经常性损益列为经常性损益的情形。</div>
+      </div>
+
+      <!-- Key changes -->
+      <div class="b-grid__item b-grid__item--md-5 panel panel--glass panel-ring p-6">
+        <div class="h-beam mb-4">
+          <div class="beam"></div>
+          <div>
+            <div class="h-zh">主要科目变动</div>
+            <div class="h-en">Key Line-Item Changes</div>
+          </div>
+        </div>
+        <ul class="space-y-3 text-[0.95rem]">
+          <li class="flex items-start gap-3"><span class="i-chip mt-[0.35rem]"></span><div><b>在建工程</b> +144.51% 至 ¥48.79B（资产投入增加）。</div></li>
+          <li class="flex items-start gap-3"><span class="i-chip mt-[0.35rem]"></span><div><b>开发支出</b> +519.65% 至 ¥3.15B（内部研发投入增加）。</div></li>
+          <li class="flex items-start gap-3"><span class="i-chip mt-[0.35rem]"></span><div><b>长期借款</b> +641.10% 至 ¥61.20B（银行借款增加）。</div></li>
+          <li class="flex items-start gap-3"><span class="i-chip mt-[0.35rem]"></span><div><b>其他流动负债</b> +300.18% 至 ¥21.71B（发行超短融）。</div></li>
+          <li class="flex items-start gap-3"><span class="i-chip mt-[0.35rem]"></span><div><b>存货</b> +31.83% 至 ¥152.97B（汽车业务增加）。</div></li>
+          <li class="flex items-start gap-3"><span class="i-chip mt-[0.35rem]"></span><div><b>财务费用</b> 由支出转为收益（-¥2.94B），主要为汇兑收益。</div></li>
+        </ul>
+        <div class="chart-footnote">注：变动率基于 2024 年末或上年同期口径。</div>
+      </div>
+    </section>
+
+    <!-- Shareholders -->
+    <section class="mt-12 b-grid">
+      <div class="b-grid__item b-grid__item--md-7 panel panel--glass panel-ring p-6">
+        <div class="h-beam mb-4">
+          <div class="beam"></div>
+          <div>
+            <div class="h-zh">前五大股东</div>
+            <div class="h-en">Top 5 Shareholders</div>
+          </div>
+        </div>
+        <div class="space-y-4" data-bar-group data-bar-max="40.38">
+          <!-- Each row -->
+          <div>
+            <div class="flex items-center justify-between">
+              <div class="text-slate-200">HKSCC NOMINEES LIMITED</div>
+              <div class="muted">40.38% · 3,681,484,673</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill" data-bar-value="40.38"></div></div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between">
+              <div class="text-slate-200">王传福</div>
+              <div class="muted">16.90% · 1,540,871,550</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill" data-bar-value="16.90"></div></div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between">
+              <div class="text-slate-200">吕向阳</div>
+              <div class="muted">7.87% · 717,685,860</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill" data-bar-value="7.87"></div></div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between">
+              <div class="text-slate-200">融捷投资控股集团有限公司</div>
+              <div class="muted">5.11% · 465,448,806</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill" data-bar-value="5.11"></div></div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between">
+              <div class="text-slate-200">香港中央结算有限公司</div>
+              <div class="muted">2.91% · 265,267,020</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill" data-bar-value="2.91"></div></div>
+          </div>
+        </div>
+        <div class="chart-footnote">注：总股本 9,117,197,565 股（权益分派实施后）。</div>
+      </div>
+
+      <div class="b-grid__item b-grid__item--md-5 panel panel--glass panel-ring p-6">
+        <div class="h-beam mb-4">
+          <div class="beam"></div>
+          <div>
+            <div class="h-zh">其他重要事项</div>
+            <div class="h-en">Other Matters</div>
+          </div>
+        </div>
+        <ul class="space-y-3 text-[0.95rem]">
+          <li class="flex items-start gap-3"><span class="i-chip mt-[0.35rem]"></span><div>2024 年度利润分配与资本公积转增：每 10 股派现 ¥39.74（含税），每 10 股送 8 股、转增 12 股；总股本增至 9,117,197,565 股。</div></li>
+          <li class="flex items-start gap-3"><span class="i-chip mt-[0.35rem]"></span><div>为提升 H 股流动性，2025-09-19 起每手买卖单位由 500 股调整为 100 股。</div></li>
+          <li class="flex items-start gap-3"><span class="i-chip mt-[0.35rem]"></span><div>第三季度报告未经审计。</div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Collapsible: Statements -->
+    <section class="mt-12 b-grid">
+      <div class="b-grid__item b-grid__item--md-12 panel panel--glass panel-ring p-6">
+        <div class="h-beam mb-4">
+          <div class="beam"></div>
+          <div>
+            <div class="h-zh">详细财务报表（精选）</div>
+            <div class="h-en">Statements (Selected)</div>
+          </div>
+        </div>
+
+        <details class="mb-4">
+          <summary class="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-white/5">
+            <span class="font-semibold">合并利润表（年初至报告期末）</span>
+            <span class="rot-90 transition-transform text-slate-400">▶</span>
+          </summary>
+          <div class="overflow-x-auto pb-2 px-1">
+            <table class="data-table min-w-[720px]">
+              <thead>
+                <tr><th>项目</th><th>2025.01-09</th><th>2024.01-09</th><th>变动说明</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>营业总收入</td><td>¥566.27B</td><td>¥502.25B</td><td class="muted">增长 12.75%</td></tr>
+                <tr><td>营业总成本</td><td>¥548.56B</td><td>¥478.03B</td><td class="muted">成本随业务扩张</td></tr>
+                <tr><td>研发费用</td><td>¥43.75B</td><td>¥33.32B</td><td class="muted">+31.30%</td></tr>
+                <tr><td>财务费用</td><td>-¥2.94B</td><td>¥1.03B</td><td class="muted">汇兑收益</td></tr>
+                <tr><td>归母净利润</td><td>¥23.33B</td><td>¥25.24B</td><td class="muted">-7.55%</td></tr>
+                <tr><td>每股收益（基本/稀释）</td><td>2.56</td><td>2.89</td><td class="muted">股本调整后口径</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="chart-footnote">注：单位人民币；未经审计。</div>
+        </details>
+
+        <details class="mb-4">
+          <summary class="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-white/5">
+            <span class="font-semibold">合并资产负债表（期末）</span>
+            <span class="rot-90 transition-transform text-slate-400">▶</span>
+          </summary>
+          <div class="overflow-x-auto pb-2 px-1">
+            <table class="data-table min-w-[820px]">
+              <thead>
+                <tr><th>项目</th><th>2025-09-30</th><th>2024-12-31</th><th>变动率</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>总资产</td><td>¥901.93B</td><td>¥783.36B</td><td class="muted">+15.14%</td></tr>
+                <tr><td>负债合计</td><td>¥643.53B</td><td>¥584.67B</td><td class="muted">+10.09%</td></tr>
+                <tr><td>归母权益</td><td>¥245.52B</td><td>¥185.25B</td><td class="muted">+32.53%</td></tr>
+                <tr><td>在建工程</td><td>¥48.79B</td><td>¥19.95B</td><td class="muted">+144.51%</td></tr>
+                <tr><td>长期借款</td><td>¥61.20B</td><td>¥8.26B</td><td class="muted">+641.10%</td></tr>
+                <tr><td>其他流动负债</td><td>¥21.71B</td><td>¥5.42B</td><td class="muted">+300.18%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="chart-footnote">注：权益含少数股东权益；单位人民币。</div>
+        </details>
+
+        <details>
+          <summary class="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-white/5">
+            <span class="font-semibold">合并现金流量表（年初至报告期末）</span>
+            <span class="rot-90 transition-transform text-slate-400">▶</span>
+          </summary>
+          <div class="overflow-x-auto pb-2 px-1">
+            <table class="data-table min-w-[760px]">
+              <thead>
+                <tr><th>项目</th><th>2025.01-09</th><th>2024.01-09</th><th>变动说明</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>经营现金流净额</td><td>¥40.85B</td><td>¥56.27B</td><td class="muted">-27.42%</td></tr>
+                <tr><td>投资现金流净额</td><td>-¥127.57B</td><td>-¥86.65B</td><td class="muted">固定资产等投资增加</td></tr>
+                <tr><td>筹资现金流净额</td><td>¥101.66B</td><td>-¥11.96B</td><td class="muted">配售 H 股、借款与发债</td></tr>
+                <tr><td>期末现金及等价物</td><td>¥117.47B</td><td>¥65.81B</td><td class="muted">现金充裕</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="chart-footnote">注：单位人民币；经营规模扩大与资本开支增加共同影响现金流。</div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Governance statements -->
+    <section class="mt-12 b-grid">
+      <div class="b-grid__item b-grid__item--md-12 panel panel--glass panel-ring p-6">
+        <div class="h-beam mb-4">
+          <div class="beam"></div>
+          <div>
+            <div class="h-zh">公司声明与合规</div>
+            <div class="h-en">Statements &amp; Compliance</div>
+          </div>
+        </div>
+        <ul class="grid md:grid-cols-3 gap-4 text-[0.95rem]">
+          <li class="p-4 rounded-lg bg-white/5/5 hover:bg-white/10 border border-white/10">
+            董事会、监事会及高管保证季度报告内容真实、准确、完整，并承担连带法律责任。
+          </li>
+          <li class="p-4 rounded-lg bg-white/5/5 hover:bg-white/10 border border-white/10">
+            公司负责人、主管会计负责人及会计机构负责人声明：财务信息真实、准确、完整。
+          </li>
+          <li class="p-4 rounded-lg bg-white/5/5 hover:bg-white/10 border border-white/10">
+            第三季度报告未经审计（Unaudited）。
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="mt-10 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-6 py-8 text-sm text-slate-400">
+      © 比亚迪股份有限公司（BYD Company Limited）2025 Q3. 数据来源：公司对外披露的《2025 年第三季度报告》。
+      本页面为信息展示，非投资建议。单位均为人民币，若无特别说明。
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-lu7+Hc1Q2T1j3p6C0C8K9KX1jzY7XnA+fQ4803C9p6R7Yf2w8bJ2C3K5g5rWgk7vDK9jzOqH3e6S4lG2wqX2mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- React + ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Framer Motion UMD -->
+  <script src="https://unpkg.com/framer-motion/dist/framer-motion.umd.js"></script>
+
+  <script>
+    // Utils: number formatting
+    function formatValue(val, fmt){
+      if(fmt === 'currency-b'){
+        // Billions
+        const sign = val < 0 ? '-' : '';
+        const n = Math.abs(val);
+        return sign + '¥' + n.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2}) + 'B';
+      }
+      if(fmt === 'percent'){
+        const sign = val > 0 ? '+' : '';
+        return sign + (val).toFixed(2) + '%';
+      }
+      return val.toLocaleString();
+    }
+
+    // GSAP: count-up animation
+    function animateCounts(){
+      const els = document.querySelectorAll('[data-count]');
+      els.forEach(el => {
+        const raw = parseFloat(el.getAttribute('data-count'));
+        const fmt = el.getAttribute('data-format') || '';
+        const obj = { v: 0 };
+        const start = (el.textContent || '').trim();
+        gsap.to(obj, {
+          v: raw,
+          duration: 1.2,
+          ease: 'power2.out',
+          onUpdate(){
+            el.textContent = formatValue(obj.v, fmt);
+          }
+        });
+      });
+    }
+
+    // GSAP: bar fill animation (positive & negative)
+    function animateBars(){
+      // Groups with explicit maxima
+      document.querySelectorAll('[data-bar-group]').forEach(group => {
+        const max = parseFloat(group.getAttribute('data-bar-max')) || null;
+        const fills = group.querySelectorAll('.bar-fill:not(.bar-fill--neg)');
+        const negfills = group.querySelectorAll('.bar-fill--neg');
+
+        if(max){
+          fills.forEach(el => {
+            const v = parseFloat(el.getAttribute('data-bar-value')) || 0;
+            const pct = Math.max(0, Math.min(100, (v / max) * 100));
+            gsap.to(el, { width: pct + '%', duration: 1.2, ease: 'power2.out', delay: 0.1 });
+          });
+        } else {
+          fills.forEach(el => {
+            const v = parseFloat(el.getAttribute('data-bar-value')) || 0;
+            gsap.to(el, { width: (v) + '%', duration: 1.2, ease: 'power2.out', delay: 0.1 });
+          });
+        }
+        negfills.forEach(el => {
+          const v = Math.abs(parseFloat(el.getAttribute('data-bar-value')) || 0);
+          const maxabs = parseFloat(el.getAttribute('data-bar-maxabs')) || max || v;
+          const pct = Math.max(0, Math.min(100, (v / maxabs) * 100));
+          gsap.to(el, { width: pct + '%', duration: 1.2, ease: 'power2.out', delay: 0.1 });
+        });
+      });
+    }
+
+    // Intersection observer to trigger animations
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          animateCounts();
+          animateBars();
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const anchor = document.querySelector('main');
+      if(anchor) io.observe(anchor);
+    });
+
+    // Framer Motion Hero
+    (function(){
+      const React = window.React;
+      const ReactDOM = window.ReactDOM;
+      const { motion, AnimatePresence } = window.framerMotion || {};
+
+      if(!React || !ReactDOM || !motion){ return; }
+
+      function Hero(){
+        return React.createElement(
+          'div',
+          { className: 'relative overflow-hidden' },
+          React.createElement(
+            'div',
+            { className: 'flex flex-col gap-4' },
+            React.createElement(motion.div, {
+              initial: { opacity: 0, y: 20 },
+              animate: { opacity: 1, y: 0 },
+              transition: { duration: 0.6, ease: 'easeOut' },
+              className: 'text-byd-red text-sm tracking-[.22em] uppercase'
+            }, 'BYD Company Limited · 002594'),
+            React.createElement(motion.h1, {
+              initial: { opacity: 0, y: 28 },
+              animate: { opacity: 1, y: 0 },
+              transition: { duration: 0.7, delay: 0.1, ease: 'easeOut' },
+              className: 'text-[2.2rem] leading-[1.05] md:text-[4rem] font-black'
+            }, '比亚迪 2025 年第三季度报告'),
+            React.createElement(motion.div, {
+              initial: { opacity: 0, y: 16 },
+              animate: { opacity: 1, y: 0 },
+              transition: { duration: 0.6, delay: 0.2 },
+              className: 'text-slate-300'
+            }, 'BYD Q3 2025 Report · Unaudited')
+          )
+        );
+      }
+
+      const rootEl = document.getElementById('framer-root');
+      if(rootEl){
+        const root = ReactDOM.createRoot(rootEl);
+        root.render(React.createElement(Hero));
+      }
+    })();
+  </script>
+</body>
+</html>
