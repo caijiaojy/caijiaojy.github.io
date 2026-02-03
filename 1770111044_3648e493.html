@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>比亚迪 2025 年第三季度财报</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    .card {
+      background-color: #f8fafc;
+      border: 2px solid rgba(34, 197, 94, 0.3); /* 高亮色透明边框 */
+      padding: 20px;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-inter h-full flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-green-600 text-white p-6 flex items-center justify-between">
+    <h1 class="text-4xl font-bold">比亚迪股份有限公司</h1>
+    <div class="text-sm text-green-200">
+      2025 年第三季度报告
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow p-8 overflow-y-auto">
+
+    <section class="mb-12">
+      <h2 class="text-3xl font-semibold mb-4">主要财务数据</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="card">
+          <h3 class="text-lg mb-2">营业收入</h3>
+          <p class="text-3xl font-bold text-green-600">194,984,598,000.00</p>
+          <p class="text-sm text-gray-500">同比 -3.05%</p>
+          <p class="text-sm mt-2">人民币元</p>
+        </div>
+        <div class="card">
+          <h3 class="text-lg mb-2">净利润</h3>
+          <p class="text-3xl font-bold text-green-600">23,333,173,000.00</p>
+          <p class="text-sm text-gray-500">同比 -7.55%</p>
+          <p class="text-sm mt-2">人民币元</p>
+        </div>
+        <div class="card">
+          <h3 class="text-lg mb-2">总资产</h3>
+          <p class="text-3xl font-bold text-green-600">901,925,091,000.00</p>
+          <p class="text-sm text-gray-500">同比 +15.14%</p>
+          <p class="text-sm mt-2">人民币元</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Non-GAAP Earnings -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-semibold mb-4">非经常性损益</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="card">
+          <h3 class="text-lg mb-2">非流动性资产处置损益</h3>
+          <p class="text-3xl font-bold text-red-600">-306,279,000.00</p>
+          <p class="text-sm text-gray-500">人民币元</p>
+        </div>
+        <div class="card">
+          <h3 class="text-lg mb-2">政府补助</h3>
+          <p class="text-3xl font-bold text-green-600">981,027,000.00</p>
+          <p class="text-sm text-gray-500">人民币元</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bar Chart: 财务费用变动 -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-semibold mb-4">财务费用变动</h2>
+      <div class="space-y-4">
+        <div class="flex items-center">
+          <div class="w-3/4 bg-gray-300 h-8 rounded-full relative">
+            <div class="w-2/3 h-8 bg-green-500 rounded-full absolute top-0 left-0"></div>
+          </div>
+          <p class="ml-4 text-sm">-2,935,816,000.00</p>
+        </div>
+        <div class="flex items-center">
+          <div class="w-3/4 bg-gray-300 h-8 rounded-full relative">
+            <div class="w-1/4 h-8 bg-red-500 rounded-full absolute top-0 left-0"></div>
+          </div>
+          <p class="ml-4 text-sm">1,027,128,000.00</p>
+        </div>
+      </div>
+      <p class="text-xs mt-2 text-gray-500">单位：人民币元</p>
+    </section>
+
+    <!-- Shareholders Section -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-semibold mb-4">股东信息</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="card">
+          <h3 class="text-lg mb-2">A/H股股东总数</h3>
+          <p class="text-3xl font-bold text-green-600">642,600</p>
+          <p class="text-sm text-gray-500">A股股东：642,496 户；H股股东：104 户</p>
+        </div>
+        <div class="card">
+          <h3 class="text-lg mb-2">前十大股东</h3>
+          <p class="text-lg font-semibold">HKSCC NOMINEES LIMITED</p>
+          <p class="text-sm">持股比例：40.38%</p>
+        </div>
+        <div class="card">
+          <h3 class="text-lg mb-2">王传福</h3>
+          <p class="text-lg font-semibold">16.90%</p>
+          <p class="text-sm">境内自然人</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Financial Notes -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-semibold mb-4">主要财务指标变动原因</h2>
+      <ul class="list-disc list-inside space-y-3 text-sm text-gray-700">
+        <li>营业收入下降主要是市场环境变化影响。</li>
+        <li>净利润下降主要是成本上升及市场策略调整。</li>
+        <li>总资产增长主要是融资租赁与研发投资增加。</li>
+        <li>财务费用大幅改善，主要是汇兑收益。</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-100 text-gray-600 text-center py-4">
+    <p>公告编号：2025-058 | 披露日期：2025年10月30日</p>
+    <p>投资者关系网站：www.byn.com | 信息披露平台：www.cninfo.com.cn</p>
+  </footer>
+
+  <!-- GSAP and Framer Motion -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@framer/motion/dist/motion.umd.js"></script>
+
+  <!-- GSAP Animation Script -->
+  <script>
+    gsap.from(".card", {
+      opacity: 0,
+      y: 30,
+      duration: 1,
+      stagger: 0.2,
+      ease: "power3.out"
+    });
+  </script>
+
+</body>
+</html>
