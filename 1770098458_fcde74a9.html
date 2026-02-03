@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>比亚迪股份有限公司 | 2025 年第三季度报告 — 动态财报页面</title>
+  <meta name="description" content="比亚迪股份有限公司（BYD）2025 年第三季度报告动态财报页面。基于 TailwindCSS、Bemto Grid、GSAP 与 Framer Motion（Motion One）。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+SC:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#D7000F',
+              red2: '#E02B2B',
+              ink: '#0B0C0E',
+              slab: '#121316',
+              slate: '#16181B',
+              mist: '#8B929A'
+            }
+          },
+          fontFamily: {
+            display: ['Noto Sans SC', 'Inter', 'system-ui', 'sans-serif'],
+            body: ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif']
+          },
+          dropShadow: {
+            glow: '0 0 30px rgba(215,0,15,0.25)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root{
+      --brand-red: #D7000F;
+      --brand-red-40: rgba(215,0,15,.40);
+      --brand-red-25: rgba(215,0,15,.25);
+      --ink: #0B0C0E;
+      --slab: #121316;
+      --slate: #16181B;
+      --mist: #8B929A;
+    }
+    html,body{background: radial-gradient(1200px 600px at 80% -10%, rgba(215,0,15,0.10), transparent 60%) , linear-gradient(180deg, var(--slab), var(--ink));}
+    /* Bemto Grid (Bento-style) */
+    .bemto-grid{
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0,1fr));
+      grid-auto-rows: minmax(120px, auto);
+      gap: 16px;
+    }
+    @media (max-width: 1024px){
+      .bemto-grid{ grid-template-columns: repeat(6, minmax(0,1fr)); }
+    }
+    @media (max-width: 640px){
+      .bemto-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; grid-auto-rows: minmax(96px, auto); }
+    }
+    .bento{
+      position: relative;
+      border: 1px solid rgba(215,0,15,0.28);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0));
+      backdrop-filter: blur(4px);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .bento::before{
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 14px;
+      pointer-events: none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .bento-edge{
+      position: absolute; inset: -1px;
+      border-radius: 14px;
+      background:
+        linear-gradient(90deg, rgba(215,0,15,0.10), transparent 30%),
+        linear-gradient(180deg, rgba(215,0,15,0.10), transparent 30%);
+      mix-blend-mode: lighten;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .metric{
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .metric .value{
+      font-family: 'Noto Sans SC', 'Inter', sans-serif;
+      line-height: .95;
+      letter-spacing: -0.02em;
+    }
+    .metric .sub{
+      font-size: 12px; color: var(--mist);
+    }
+    .yoY-pill{
+      border: 1px solid rgba(215,0,15,0.28);
+      background: rgba(255,255,255,0.02);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .figure{
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px dashed rgba(215,0,15,0.25);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
+    }
+    .bars{
+      display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 6px;
+    }
+    .bar-track{ height: 8px; border-radius: 6px; background: rgba(255,255,255,0.06); overflow: hidden; }
+    .bar{
+      height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--brand-red), #E85555);
+      width: 0%;
+    }
+    .bar.prev{ background: linear-gradient(90deg, rgba(215,0,15,0.38), rgba(215,0,15,0.22)); }
+    .figcap{
+      margin-top: 6px;
+      font-size: 12px; color: var(--mist);
+      border-top: 1px dotted rgba(215,0,15,0.25); padding-top: 6px;
+    }
+    .divider{
+      height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.12), rgba(255,255,255,0));
+      margin: 12px 0;
+    }
+    /* Transparent highlight borders to avoid overlap */
+    .hl{
+      outline: 1.5px solid rgba(215,0,15,0.25);
+      outline-offset: -1.5px;
+    }
+    /* Small table style */
+    .mini-table{
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .mini-table th, .mini-table td{
+      padding: 8px 6px;
+      font-size: 13px;
+      border-bottom: 1px dashed rgba(215,0,15,0.18);
+    }
+    .mini-table th{
+      color: #D0D3D7; font-weight: 600; text-align: left;
+    }
+    .mini-table td{
+      color: #CDD1D6;
+    }
+  </style>
+</head>
+<body class="text-white font-body antialiased">
+  <header class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-start justify-between gap-6">
+      <div>
+        <div class="text-[13px] uppercase tracking-[0.22em] text-brand-mist">BYD COMPANY LIMITED</div>
+        <h1 class="font-display font-extrabold leading-[0.95] tracking-tight mt-1">
+          <span class="block text-4xl sm:text-5xl md:text-6xl">比亚迪 2025 年第三季度报告</span>
+          <span class="block text-base sm:text-lg text-brand-mist mt-1">Q3 2025 unaudited results — 简报展示</span>
+        </h1>
+        <p class="text-xs sm:text-sm text-brand-mist mt-2">公告编号：2025-058 · 证券代码：002594 · 证券简称：比亚迪 · 披露日期：2025-10-30</p>
+      </div>
+      <div class="hidden md:flex flex-col items-end">
+        <span class="text-xs text-brand-mist">Theme</span>
+        <div class="h-7 w-28 rounded-md border border-[rgba(215,0,15,0.35)] bg-[linear-gradient(90deg,rgba(215,0,15,0.45),rgba(215,0,15,0.1))]"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 pb-16">
+    <!-- Hero Bento -->
+    <section class="bemto-grid">
+      <article class="bento col-span-12 sm:col-span-12 lg:col-span-12 min-h-[160px] relative">
+        <div class="bento-edge"></div>
+        <div class="p-6 sm:p-8 md:p-10 flex flex-col lg:flex-row items-start lg:items-end justify-between gap-6">
+          <div>
+            <div class="text-[12px] tracking-[0.25em] uppercase text-brand-mist">Quarterly Snapshot</div>
+            <h2 class="font-display text-[36px] sm:text-[48px] md:text-[56px] lg:text-[64px] font-black leading-[0.95] tracking-tight">
+              关键指标一览
+            </h2>
+            <p class="text-sm text-brand-mist mt-1">All figures in CNY unless otherwise stated</p>
+          </div>
+          <div class="flex flex-wrap items-end gap-3">
+            <span class="yoY-pill">未经审计 · Unaudited</span>
+            <span class="yoY-pill">单位：亿元（CNY bn）</span>
+            <span class="yoY-pill">报告期：2025 Q3</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Q3 Revenue -->
+      <article class="bento col-span-12 sm:col-span-6 lg:col-span-4 p-6 flex flex-col justify-between" data-motion-card>
+        <div class="metric">
+          <div class="text-xs uppercase tracking-[0.2em] text-brand-mist">营业收入 · Revenue</div>
+          <div class="value text-[44px] sm:text-[52px] font-extrabold" data-counter data-unit="bn" data-value="194.984598">0</div>
+          <div class="sub">本报告期：1949.846 亿元 · Q3 2025 revenue: 194.985 bn CNY</div>
+        </div>
+        <div class="flex items-center justify-between mt-4">
+          <span class="yoY-pill">同比 YoY：-3.05%</span>
+          <figure class="figure w-1/2" data-figure data-current="194.984598" data-yoy="-3.05">
+            <div class="bars">
+              <div class="text-[10px] text-brand-mist">上年同期</div>
+              <div class="bar-track"><div class="bar prev" data-prevbar></div></div>
+              <div class="text-[10px] text-brand-mist mt-1">本期</div>
+              <div class="bar-track"><div class="bar" data-curbar></div></div>
+            </div>
+            <figcaption class="figcap">[1] Q3 revenue — small bars denote prev. quarter-year vs current</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- Q3 Net Profit -->
+      <article class="bento col-span-12 sm:col-span-6 lg:col-span-4 p-6 flex flex-col justify-between" data-motion-card>
+        <div class="metric">
+          <div class="text-xs uppercase tracking-[0.2em] text-brand-mist">归母净利润 · Net profit (Attributable)</div>
+          <div class="value text-[44px] sm:text-[52px] font-extrabold" data-counter data-unit="bn" data-value="78.2264">0</div>
+          <div class="sub">本报告期：78.226 亿元 · Q3 2025</div>
+        </div>
+        <div class="flex items-center justify-between mt-4">
+          <span class="yoY-pill">同比 YoY：-32.60%</span>
+          <figure class="figure w-1/2" data-figure data-current="78.2264" data-yoy="-32.60">
+            <div class="bars">
+              <div class="text-[10px] text-brand-mist">上年同期</div>
+              <div class="bar-track"><div class="bar prev" data-prevbar></div></div>
+              <div class="text-[10px] text-brand-mist mt-1">本期</div>
+              <div class="bar-track"><div class="bar" data-curbar></div></div>
+            </div>
+            <figcaption class="figcap">[2] Q3 attributable net profit</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- YTD Revenue -->
+      <article class="bento col-span-12 sm:col-span-6 lg:col-span-4 p-6 flex flex-col justify-between" data-motion-card>
+        <div class="metric">
+          <div class="text-xs uppercase tracking-[0.2em] text-brand-mist">年初至今营业收入 · Revenue YTD</div>
+          <div class="value text-[44px] sm:text-[52px] font-extrabold" data-counter data-unit="bn" data-value="5662.65546">0</div>
+          <div class="sub">1–9 月累计：5662.656 亿元 · +12.75% YoY</div>
+        </div>
+        <div class="flex items-center justify-between mt-4">
+          <span class="yoY-pill">同比 YoY：+12.75%</span>
+          <figure class="figure w-1/2" data-figure data-current="5662.65546" data-yoy="12.75">
+            <div class="bars">
+              <div class="text-[10px] text-brand-mist">上年同期</div>
+              <div class="bar-track"><div class="bar prev" data-prevbar></div></div>
+              <div class="text-[10px] text-brand-mist mt-1">本期</div>
+              <div class="bar-track"><div class="bar" data-curbar></div></div>
+            </div>
+            <figcaption class="figcap">[3] YTD revenue through Q3</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- YTD Net Profit -->
+      <article class="bento col-span-12 sm:col-span-6 lg:col-span-4 p-6 flex flex-col justify-between" data-motion-card>
+        <div class="metric">
+          <div class="text-xs uppercase tracking-[0.2em] text-brand-mist">年初至今归母净利润 · Net profit YTD</div>
+          <div class="value text-[44px] sm:text-[52px] font-extrabold" data-counter data-unit="bn" data-value="233.33173">0</div>
+          <div class="sub">1–9 月累计：233.332 亿元 · -7.55% YoY</div>
+        </div>
+        <div class="flex items-center justify-between mt-4">
+          <span class="yoY-pill">同比 YoY：-7.55%</span>
+          <figure class="figure w-1/2" data-figure data-current="233.33173" data-yoy="-7.55">
+            <div class="bars">
+              <div class="text-[10px] text-brand-mist">上年同期</div>
+              <div class="bar-track"><div class="bar prev" data-prevbar></div></div>
+              <div class="text-[10px] text-brand-mist mt-1">本期</div>
+              <div class="bar-track"><div class="bar" data-curbar></div></div>
+            </div>
+            <figcaption class="figcap">[4] YTD attributable net profit</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- Operating Cash Flow YTD -->
+      <article class="bento col-span-12 sm:col-span-6 lg:col-span-4 p-6 flex flex-col justify-between" data-motion-card>
+        <div class="metric">
+          <div class="text-xs uppercase tracking-[0.2em] text-brand-mist">经营现金流净额（YTD）· OCFO</div>
+          <div class="value text-[44px] sm:text-[52px] font-extrabold" data-counter data-unit="bn" data-value="408.45498">0</div>
+          <div class="sub">1–9 月累计：408.455 亿元 · -27.42% YoY</div>
+        </div>
+        <div class="flex items-center justify-between mt-4">
+          <span class="yoY-pill">同比 YoY：-27.42%</span>
+          <figure class="figure w-1/2" data-figure data-current="408.45498" data-yoy="-27.42">
+            <div class="bars">
+              <div class="text-[10px] text-brand-mist">上年同期</div>
+              <div class="bar-track"><div class="bar prev" data-prevbar></div></div>
+              <div class="text-[10px] text-brand-mist mt-1">本期</div>
+              <div class="bar-track"><div class="bar" data-curbar></div></div>
+            </div>
+            <figcaption class="figcap">[5] Net cash from operating activities (YTD)</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- EPS / ROE -->
+      <article class="bento col-span-12 sm:col-span-6 lg:col-span-4 p-6 flex flex-col justify-between" data-motion-card>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="metric">
+            <div class="text-xs uppercase tracking-[0.2em] text-brand-mist">基本每股收益 · EPS (Basic)</div>
+            <div class="value text-[36px] sm:text-[44px] font-extrabold" data-counter data-unit="raw" data-value="0.85">0</div>
+            <div class="sub">Q3：0.85 元/股（-36.09% YoY）</div>
+          </div>
+          <div class="metric">
+            <div class="text-xs uppercase tracking-[0.2em] text-brand-mist">加权 ROE（YTD）</div>
+            <div class="value text-[36px] sm:text-[44px] font-extrabold" data-counter data-unit="pct" data-value="10.83">0</div>
+            <div class="sub">1–9 月累计（-6.32pct YoY）</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="flex items-center gap-2">
+          <span class="yoY-pill">稀释每股收益 = 0.85 元/股</span>
+          <span class="yoY-pill">YTD EPS = 2.56 元/股（-11.42% YoY）</span>
+        </div>
+      </article>
+
+      <!-- Balance Sheet Snapshot -->
+      <article class="bento col-span-12 sm:col-span-6 lg:col-span-4 p-6 flex flex-col justify-between" data-motion-card>
+        <div class="metric">
+          <div class="text-xs uppercase tracking-[0.2em] text-brand-mist">资产与权益 · Assets & Equity</div>
+          <div class="grid grid-cols-2 gap-4 mt-2">
+            <div>
+              <div class="text-[12px] text-brand-mist">资产总计</div>
+              <div class="value text-[34px] sm:text-[40px] font-extrabold" data-counter data-unit="bn" data-value="9019.25091">0</div>
+              <div class="sub">期末：9019.251 亿元 · +15.14%</div>
+            </div>
+            <div>
+              <div class="text-[12px] text-brand-mist">归母权益</div>
+              <div class="value text-[34px] sm:text-[40px] font-extrabold" data-counter data-unit="bn" data-value="2455.15455">0</div>
+              <div class="sub">期末：2455.155 亿元 · +32.53%</div>
+            </div>
+          </div>
+        </div>
+        <figure class="figure mt-4" data-figure-bis>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <div class="text-[11px] text-brand-mist mb-1">Assets growth vs 2024YE</div>
+              <div class="bar-track"><div class="bar prev" style="width:70%"></div></div>
+              <div class="bar-track mt-1"><div class="bar" style="width:80%"></div></div>
+            </div>
+            <div>
+              <div class="text-[11px] text-brand-mist mb-1">Equity growth vs 2024YE</div>
+              <div class="bar-track"><div class="bar prev" style="width:60%"></div></div>
+              <div class="bar-track mt-1"><div class="bar" style="width:79%"></div></div>
+            </div>
+          </div>
+          <figcaption class="figcap">[6] Indexed bars (prev year-end = base, current = higher line)</figcaption>
+        </figure>
+      </article>
+
+      <!-- Non-recurring Items -->
+      <article class="bento col-span-12 lg:col-span-8 p-6" data-motion-card>
+        <div class="flex items-center justify-between">
+          <h3 class="font-display text-2xl sm:text-3xl font-extrabold">非经常性损益 · Non-recurring items</h3>
+          <span class="yoY-pill">Q3 合计：+93.189 亿元；YTD：+284.268 亿元</span>
+        </div>
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <table class="mini-table">
+              <thead>
+                <tr><th>项目</th><th>Q3 (亿元)</th><th>YTD (亿元)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>政府补助（经营相关除外）</td><td>98.103</td><td>226.060</td></tr>
+                <tr><td>交易性/公允价值及处置收益</td><td>78.058</td><td>160.575</td></tr>
+                <tr><td>非流动资产处置</td><td>-30.628</td><td>-70.351</td></tr>
+                <tr><td>其他营业外净额</td><td>-10.290</td><td>54.297</td></tr>
+                <tr><td>减：税费与少数股东影响</td><td>-42.054</td><td>-88.818</td></tr>
+              </tbody>
+            </table>
+            <div class="figcap">[7] 单位：亿元；来源：公司三季报披露表格</div>
+          </div>
+          <div>
+            <div class="text-sm text-brand-mist">注：非经常性损益用于说明归母净利润与扣非净利润差异。</div>
+            <div class="divider"></div>
+            <ul class="text-[13px] space-y-2">
+              <li class="hl rounded px-3 py-2">Q3 扣非归母净利润：68.908 亿元；与归母净利润差 9.319 亿元</li>
+              <li class="hl rounded px-3 py-2">YTD 扣非归母净利润：204.905 亿元；与归母净利润差 28.427 亿元</li>
+              <li class="hl rounded px-3 py-2">非经常性来源主要为政府补助与金融工具公允价值变动</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- Reasons for Changes -->
+      <article class="bento col-span-12 lg:col-span-4 p-6" data-motion-card>
+        <h3 class="font-display text-2xl sm:text-3xl font-extrabold">变动原因摘要 · Drivers</h3>
+        <div class="divider"></div>
+        <ul class="space-y-3 text-[14px] leading-relaxed">
+          <li class="hl rounded px-3 py-2">研发费用：437.484 亿元（+31.30%）主要由于职工薪酬与物料消耗增加</li>
+          <li class="hl rounded px-3 py-2">财务费用：-29.358 亿元（由损转益），主要为汇兑收益</li>
+          <li class="hl rounded px-3 py-2">投资现金流净额：-1275.713 亿元（绝对额扩大），购建固定资产等投入增加</li>
+          <li class="hl rounded px-3 py-2">筹资现金流净额：+1016.627 亿元，H 股配售、借款与债券发行带动</li>
+        </ul>
+        <div class="figcap mt-3">[8] 科目来自 1–9 月累计的损益/现金流表</div>
+      </article>
+
+      <!-- Share Capital & Shareholders -->
+      <article class="bento col-span-12 lg:col-span-8 p-6" data-motion-card>
+        <div class="flex items-center justify-between">
+          <h3 class="font-display text-2xl sm:text-3xl font-extrabold">股本与股东 · Share Capital & Holders</h3>
+          <span class="yoY-pill">总股本：9,117,197,565 股</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+          <div class="figure">
+            <div class="text-sm text-brand-mist mb-2">派发红股/转增（2025/07 已实施）</div>
+            <p class="text-[14px]">每 10 股送 8 股、转增 12 股；每 10 股派现 39.74 元（含税）</p>
+            <div class="figcap">[9] 注册资本增至 911,719.7565 万元</div>
+          </div>
+          <div class="figure">
+            <div class="text-sm text-brand-mist mb-2">前列股东（节选）</div>
+            <ul class="text-[14px] space-y-1">
+              <li>HKSCC NOMINEES LIMITED：40.38%（H 股）</li>
+              <li>王传福：16.90%</li>
+              <li>吕向阳：7.87%</li>
+              <li>融捷投资控股集团：5.11%</li>
+            </ul>
+            <div class="figcap">[10] 截至报告期末</div>
+          </div>
+          <div class="figure">
+            <div class="text-sm text-brand-mist mb-2">H 股每手买卖单位</div>
+            <p class="text-[14px]">自 2025/09/19 起由 500 股更改为 100 股，进一步提升流动性</p>
+            <div class="figcap">[11] 董事会 2025/08/29 审议通过</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Notes Section -->
+      <article class="bento col-span-12 p-6" data-motion-card>
+        <h3 class="font-display text-2xl sm:text-3xl font-extrabold">注释与披露 · Notes & Disclosures</h3>
+        <div class="divider"></div>
+        <ol class="list-decimal text-[13px] ml-5 space-y-1 text-brand-mist">
+          <li>[1]–[6] 图中矩形条为脚注式可视化，前值基于披露同比推算（以绝对数/同比比例计算）；单位按图内标识。</li>
+          <li>[7] 非经常性损益合计：Q3 93.189 亿元；YTD 284.268 亿元，详见报表注释。</li>
+          <li>[8]–[11] 变动与事项来源：公司三季报“主要会计数据和财务指标”、“其他重要事项”等章节。</li>
+          <li>本页面仅为已披露数据的可视化展示，不构成任何投资建议。</li>
+        </ol>
+      </article>
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 pb-10">
+    <div class="text-[12px] text-brand-mist">
+      版权所有 © 比亚迪股份有限公司（BYD Company Limited）。页面动效基于 GSAP 与 Framer Motion（Motion One for Web）。
+    </div>
+  </footer>
+
+  <!-- GSAP -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <!-- Framer Motion (Motion One for Web by Framer) -->
+  <script src="https://unpkg.com/@motionone/dom/dist/motion.min.js"></script>
+
+  <script>
+    // Utility: number formatting
+    const fmt = {
+      bn: (v) => Number(v).toLocaleString('zh-CN', { minimumFractionDigits: 3, maximumFractionDigits: 3 }),
+      raw: (v) => Number(v).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      pct: (v) => Number(v).toFixed(2) + '%'
+    };
+
+    // Counters with GSAP
+    document.querySelectorAll('[data-counter]').forEach(el => {
+      const target = parseFloat(el.dataset.value || '0');
+      const unit = el.dataset.unit || 'bn';
+      const obj = { val: 0 };
+      gsap.to(obj, {
+        val: target,
+        duration: 1.2,
+        delay: 0.15,
+        ease: 'power2.out',
+        onUpdate: () => {
+          if(unit === 'bn') el.textContent = fmt.bn(obj.val);
+          else if(unit === 'pct') el.textContent = fmt.pct(obj.val);
+          else el.textContent = fmt.raw(obj.val);
+        }
+      });
+    });
+
+    // Footnote-style micro bar charts (prev vs current)
+    function initFootnoteBars(){
+      const nodes = document.querySelectorAll('[data-figure]');
+      nodes.forEach(fig => {
+        const cur = parseFloat(fig.dataset.current);
+        const yoy = parseFloat(fig.dataset.yoy);
+        // prev = cur / (1 + yoy%)
+        const prev = cur / (1 + (yoy/100));
+        // Normalize widths against the larger of prev/current
+        const max = Math.max(prev, cur);
+        const prevPct = Math.max(1, Math.min(100, (prev/max)*100));
+        const curPct = Math.max(1, Math.min(100, (cur/max)*100));
+
+        const prevBar = fig.querySelector('[data-prevbar]');
+        const curBar = fig.querySelector('[data-curbar]');
+        if(prevBar && curBar){
+          gsap.to(prevBar, { width: prevPct + '%', duration: 1.0, ease: 'power2.out', delay: 0.15 });
+          gsap.to(curBar, { width: curPct + '%', duration: 1.0, ease: 'power2.out', delay: 0.25 });
+        }
+      });
+    }
+    initFootnoteBars();
+
+    // Scroll reveal for .bento
+    gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll('.bento').forEach(card => {
+      gsap.from(card, {
+        opacity: 0,
+        y: 24,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse'
+        }
+      });
+    });
+
+    // Motion One hover micro-interactions
+    const { animate } = window.motion || {};
+    if(animate){
+      document.querySelectorAll('[data-motion-card]').forEach(card => {
+        let hoverAnim;
+        card.addEventListener('mouseenter', () => {
+          hoverAnim = animate(card, { transform: ['translateY(0px) scale(1)', 'translateY(-4px) scale(1.01)'] }, { duration: 0.35, easing: 'cubic-bezier(.2,.6,.2,1)', fill: 'forwards' });
+        });
+        card.addEventListener('mouseleave', () => {
+          if(hoverAnim) hoverAnim.cancel();
+          animate(card, { transform: ['translateY(-4px) scale(1.01)', 'translateY(0px) scale(1)'] }, { duration: 0.28, easing: 'cubic-bezier(.2,.6,.2,1)', fill: 'forwards' });
+        });
+      });
+    }
+
+    // Accessibility: prefers-reduced-motion
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce){
+      gsap.globalTimeline.timeScale(1000); // effectively snap
+    }
+  </script>
+</body>
+</html>
