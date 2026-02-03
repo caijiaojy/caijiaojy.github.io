@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>代办清单</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --fg: #1f2328;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --border: #e5e7eb;
+      --done: #9ca3af;
+      --danger: #ef4444;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    .app {
+      max-width: 720px;
+      margin: 4rem auto;
+      padding: 0 1rem;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+      overflow: hidden;
+    }
+    .header {
+      padding: 1.25rem 1.25rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .title {
+      margin: 0 0 .75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .add-row {
+      display: flex;
+      gap: .5rem;
+      align-items: center;
+    }
+    .input {
+      flex: 1;
+      padding: .7rem .9rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    }
+    .btn {
+      padding: .65rem .9rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--fg);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+      user-select: none;
+    }
+    .btn:hover { background: #f9fafb; }
+    .btn.primary {
+      border-color: transparent;
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn.primary:hover { filter: brightness(0.95); }
+    .filters {
+      display: flex;
+      gap: .5rem;
+      padding: .75rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filters .btn {
+      padding: .45rem .8rem;
+    }
+    .btn.filter[aria-pressed="true"] {
+      background: #eff6ff;
+      color: var(--primary);
+      border-color: #bfdbfe;
+      box-shadow: 0 0 0 3px rgba(191,219,254,.35) inset;
+    }
+    .counter {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+    .list {
+      list-style: none;
+      margin: 0;
+      padding: .25rem 0;
+      max-height: 60vh;
+      overflow: auto;
+    }
+    .item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: .75rem;
+      align-items: center;
+      padding: .65rem 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+    .item:first-child { border-top: none; }
+    .check {
+      width: 1.15rem;
+      height: 1.15rem;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    .text {
+      user-select: none;
+      cursor: pointer;
+      word-break: break-word;
+      line-height: 1.4;
+    }
+    .item.done .text {
+      color: var(--done);
+      text-decoration: line-through;
+    }
+    .del {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      padding: .35rem .45rem;
+      border-radius: 6px;
+      transition: background .15s ease, color .15s ease;
+      font-size: 1.1rem;
+    }
+    .del:hover { background: #f3f4f6; color: var(--danger); }
+    .footer {
+      padding: .85rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .92rem;
+      gap: .5rem;
+      flex-wrap: wrap;
+    }
+    .hint {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    @media (max-width: 480px) {
+      .app { margin: 2rem auto; }
+      .counter { width: 100%; order: 2; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="card" role="application" aria-label="代办清单">
+      <div class="header">
+        <h1 class="title">代办清单</h1>
+        <form id="form" class="add-row" autocomplete="off">
+          <input id="input" class="input" type="text" placeholder="输入待办事项，按 Enter 添加…" aria-label="输入待办事项" />
+          <button type="submit" class="btn primary" aria-label="添加">添加</button>
+        </form>
+      </div>
+
+      <div class="filters" role="toolbar" aria-label="筛选">
+        <button class="btn filter" data-filter="all" aria-pressed="true">全部</button>
+        <button class="btn filter" data-filter="active" aria-pressed="false">未完成</button>
+        <button class="btn filter" data-filter="completed" aria-pressed="false">已完成</button>
+        <div class="counter" id="counter">0 项</div>
+      </div>
+
+      <ul id="list" class="list" aria-live="polite"></ul>
+
+      <div class="footer">
+        <div class="hint">提示：点击复选框或文本可切换完成状态；右侧 × 可删除；刷新页面数据不丢失。</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'todos-v1';
+      const FILTER_KEY = 'todos-v1-filter';
+
+      const $ = (sel, root = document) => root.querySelector(sel);
+      const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+      const input = $('#input');
+      const form = $('#form');
+      const list = $('#list');
+      const counter = $('#counter');
+      const filterButtons = $$('.filters .filter');
+
+      let todos = [];
+      let filter = 'all'; // 'all' | 'active' | 'completed'
+
+      function load() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          const arr = raw ? JSON.parse(raw) : [];
+          if (Array.isArray(arr)) {
+            // 兼容旧数据结构
+            todos = arr
+              .filter(x => x && typeof x === 'object' && 'text' in x)
+              .map(x => ({
+                id: x.id || (Date.now() + Math.random().toString(36).slice(2, 7)),
+                text: String(x.text).slice(0, 1000),
+                done: !!x.done
+              }));
+          } else {
+            todos = [];
+          }
+        } catch (e) {
+          console.warn('读取本地存储失败，使用内存数据。', e);
+          todos = [];
+        }
+        try {
+          const f = localStorage.getItem(FILTER_KEY);
+          if (f === 'all' || f === 'active' || f === 'completed') filter = f;
+        } catch (_) {}
+      }
+
+      function save() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+        } catch (e) {
+          console.warn('写入本地存储失败。', e);
+        }
+      }
+
+      function saveFilter() {
+        try {
+          localStorage.setItem(FILTER_KEY, filter);
+        } catch (_) {}
+      }
+
+      function addTodo(text) {
+        const t = text.trim();
+        if (!t) return;
+        const todo = {
+          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+          text: t,
+          done: false
+        };
+        // 新项放在列表顶部
+        todos.unshift(todo);
+        save();
+        render();
+      }
+
+      function toggleTodo(id) {
+        const item = todos.find(t => t.id === id);
+        if (!item) return;
+        item.done = !item.done;
+        save();
+        render();
+      }
+
+      function removeTodo(id) {
+        const before = todos.length;
+        todos = todos.filter(t => t.id !== id);
+        if (todos.length !== before) {
+          save();
+          render();
+        }
+      }
+
+      function setFilter(mode) {
+        if (!['all', 'active', 'completed'].includes(mode)) return;
+        filter = mode;
+        saveFilter();
+        updateFilterButtons();
+        render();
+      }
+
+      function filteredTodos() {
+        if (filter === 'active') return todos.filter(t => !t.done);
+        if (filter === 'completed') return todos.filter(t => t.done);
+        return todos;
+      }
+
+      function updateCounter() {
+        const total = todos.length;
+        const active = todos.filter(t => !t.done).length;
+        const completed = total - active;
+        let text = `${total} 项`;
+        if (filter === 'active') text += `（未完成：${active}）`;
+        if (filter === 'completed') text += `（已完成：${completed}）`;
+        counter.textContent = text;
+      }
+
+      function updateFilterButtons() {
+        filterButtons.forEach(btn => {
+          const pressed = btn.dataset.filter === filter;
+          btn.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+        });
+      }
+
+      function render() {
+        const data = filteredTodos();
+        list.innerHTML = '';
+        if (data.length === 0) {
+          const empty = document.createElement('li');
+          empty.className = 'item';
+          empty.style.color = 'var(--muted)';
+          empty.style.justifyContent = 'center';
+          empty.textContent = '暂无事项';
+          empty.setAttribute('aria-live', 'polite');
+          list.appendChild(empty);
+        } else {
+          const frag = document.createDocumentFragment();
+          data.forEach(t => {
+            const li = document.createElement('li');
+            li.className = 'item' + (t.done ? ' done' : '');
+            li.dataset.id = t.id;
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'check';
+            checkbox.checked = t.done;
+            checkbox.setAttribute('aria-label', '切换完成状态');
+
+            const label = document.createElement('div');
+            label.className = 'text';
+            label.title = '点击切换完成状态';
+            // 避免 XSS：使用 textContent
+            label.textContent = t.text;
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'del';
+            delBtn.setAttribute('aria-label', '删除此项');
+            delBtn.title = '删除此项';
+            delBtn.textContent = '×';
+
+            li.appendChild(checkbox);
+            li.appendChild(label);
+            li.appendChild(delBtn);
+            frag.appendChild(li);
+          });
+          list.appendChild(frag);
+        }
+        updateCounter();
+      }
+
+      // 事件绑定
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        addTodo(input.value || '');
+        input.value = '';
+        input.focus();
+      });
+
+      // 列表事件委托：切换完成/删除/点击文本
+      list.addEventListener('click', (e) => {
+        const li = e.target.closest('.item');
+        if (!li) return;
+        const id = li.dataset.id;
+
+        if (e.target.classList.contains('del')) {
+          removeTodo(id);
+          return;
+        }
+        if (e.target.classList.contains('check')) {
+          toggleTodo(id);
+          return;
+        }
+        if (e.target.classList.contains('text')) {
+          toggleTodo(id);
+          return;
+        }
+      });
+
+      // 筛选按钮
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          setFilter(btn.dataset.filter);
+        });
+      });
+
+      // 初始加载
+      load();
+      updateFilterButtons();
+      render();
+    })();
+  </script>
+</body>
+</html>
