@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>比亚迪2025年第三季度报告</title>
+
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion/dist/motion.min.js"></script>
+
+    <style>
+        .highlight-border {
+            border: 2px solid rgba(52, 211, 153, 0.3);
+        }
+        .bemto-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <div class="min-h-screen p-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="col-span-1 md:col-span-2">
+                <h1 class="text-6xl font-bold mb-4">比亚迪股份有限公司</h1>
+                <p class="text-gray-600 text-xl">2025年第三季度报告</p>
+            </div>
+            <div class="flex flex-col items-end justify-end">
+                <p class="text-2xl">证券代码：002594</p>
+                <p class="text-lg mt-2">公告编号：2025-058</p>
+            </div>
+        </div>
+
+        <div class="bemto-grid gap-8 mb-12">
+            <div class="highlight-border p-6 rounded-lg">
+                <h2 class="text-3xl mb-4">营业收入</h2>
+                <div class="flex justify-between text-sm text-gray-500 mb-2">
+                    <span>本报告期</span>
+                    <span>194.98亿</span>
+                </div>
+                <div class="w-full bg-green-100 h-2 rounded-full">
+                    <div class="bg-green-500 h-2" style="width: 97%"></div>
+                </div>
+                <p class="text-xs text-right mt-1">同比-3.05%</p>
+            </div>
+            <div class="highlight-border p-6 rounded-lg">
+                <h2 class="text-3xl mb-4">净利润</h2>
+                <div class="flex justify-between text-sm text-gray-500 mb-2">
+                    <span>本报告期</span>
+                    <span>7.82亿</span>
+                </div>
+                <div class="w-full bg-red-100 h-2 rounded-full">
+                    <div class="bg-red-500 h-2" style="width: 68%"></div>
+                </div>
+                <p class="text-xs text-right mt-1">同比-32.60%</p>
+            </div>
+            <div class="highlight-border p-6 rounded-lg">
+                <h2 class="text-3xl mb-4">总资产</h2>
+                <div class="flex justify-between text-sm text-gray-500 mb-2">
+                    <span>本报告期</span>
+                    <span>9019.25亿</span>
+                </div>
+                <div class="w-full bg-blue-100 h-2 rounded-full">
+                    <div class="bg-blue-500 h-2" style="width: 15.14%"></div>
+                </div>
+                <p class="text-xs text-right mt-1">同比+15.14%</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-2xl font-bold mb-4">资产负债表</h3>
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="border-b-2 border-gray-300">
+                            <th class="py-2">项目</th>
+                            <th class="py-2">期末余额</th>
+                            <th class="py-2">期初余额</th>
+                            <th class="py-2">变动率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-gray-200">
+                            <td class="py-2">货币资金</td>
+                            <td class="py-2">119.73亿</td>
+                            <td class="py-2">102.74亿</td>
+                            <td class="py-2 text-green-600">+16.55%</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="py-2">固定资产</td>
+                            <td class="py-2">2760.39亿</td>
+                            <td class="py-2">2622.87亿</td>
+                            <td class="py-2 text-green-600">+5.25%</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="py-2">在建工程</td>
+                            <td class="py-2">487.89亿</td>
+                            <td class="py-2">199.54亿</td>
+                            <td class="py-2 text-green-600">+144.51%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-2xl font-bold mb-4">利润表</h3>
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="border-b-2 border-gray-300">
+                            <th class="py-2">项目</th>
+                            <th class="py-2">本期发生额</th>
+                            <th class="py-2">上期发生额</th>
+                            <th class="py-2">变动率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-gray-200">
+                            <td class="py-2">研发费用</td>
+                            <td class="py-2">437.48亿</td>
+                            <td class="py-2">333.19亿</td>
+                            <td class="py-2 text-green-600">+31.30%</td>
+                        </tr>
+                        <tr class="border-b border-gray-200">
+                            <td class="py-2">财务费用</td>
+                            <td class="py-2">-29.36亿</td>
+                            <td class="py-2">10.27亿</td>
+                            <td class="py-2 text-red-600">-385.83%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow mb-12">
+            <h3 class="text-2xl font-bold mb-4">股东信息</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-lg mb-2">股东总数：642,600户</p>
+                    <p class="text-sm text-gray-600">（A股642,496户 H股104户）</p>
+                </div>
+                <div>
+                    <h4 class="text-xl mb-2">前十大股东</h4>
+                    <ul class="text-sm">
+                        <li>HKSCC NOMINEES LIMITED - 40.38%</li>
+                        <li>王传福 - 16.90%</li>
+                        <li>吕向阳 - 7.87%</li>
+                        <li>融捷投资控股集团 - 5.11%</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-sm text-gray-500">
+            <p>注：数据已根据2025年6月6日股东会决议调整</p>
+            <p>报告日期：2025年10月30日</p>
+        </div>
+
+        <script>
+            gsap.from(".highlight-border", {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power3.out"
+            });
+        </script>
+        <script>
+            const { motion, dom } = window.framerMotion;
+            document.querySelectorAll('.highlight-border').forEach(card => {
+                new motion(card).hover({
+                    scale: 1.02,
+                    transition: { type: "spring", stiffness: 300 }
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>
