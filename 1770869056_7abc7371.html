@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>比亚迪股份有限公司｜2025 年第三季度报告 | BYD Q3 2025</title>
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            byd: {
+              red: '#D7000F',
+              dark: '#0B0C0E',
+              slate: '#111316',
+              accent: '#5AD7FF',
+              accent2: '#3EC6B8',
+              line: 'rgba(215,0,15,0.45)',
+              line2: 'rgba(90,215,255,0.45)',
+              line3: 'rgba(62,198,184,0.45)'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+          },
+          boxShadow: {
+            subtle: '0 1px 0 rgba(255,255,255,0.03) inset, 0 12px 40px rgba(0,0,0,0.35)',
+            plate: '0 2px 0 rgba(255,255,255,0.04) inset, 0 24px 60px rgba(0,0,0,0.45)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- React + Framer Motion (UMD) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/framer-motion@11.0.0/dist/framer-motion.umd.js"></script>
+
+  <style>
+    /* Bemto Grid (minimal, responsive flex-based implementation) */
+    :root {
+      --gutter: 16px;
+    }
+    .b-grid {
+      display: block;
+      width: 100%;
+    }
+    .b-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-left: calc(var(--gutter) * -1);
+      margin-right: calc(var(--gutter) * -1);
+    }
+    .b-col {
+      padding-left: var(--gutter);
+      padding-right: var(--gutter);
+      box-sizing: border-box;
+      flex: 0 0 auto;
+      width: 100%;
+    }
+    /* fixed spans (12-col system) */
+    .b-col--12 { width: 100%; }
+    .b-col--6 { width: 50%; }
+    .b-col--4 { width: 33.3333%; }
+    .b-col--3 { width: 25%; }
+    .b-col--2 { width: 16.6667%; }
+    @media (max-width: 1024px) {
+      .lg\:b-col--6 { width: 50%; }
+      .lg\:b-col--4 { width: 33.3333%; }
+      .lg\:b-col--3 { width: 25%; }
+    }
+    @media (max-width: 768px) {
+      .md\:b-col--12 { width: 100%; }
+      .md\:b-col--6 { width: 50%; }
+      .md\:b-col--4 { width: 33.3333%; }
+    }
+    @media (max-width: 640px) {
+      .sm\:b-col--12 { width: 100%; }
+      .sm\:b-col--6 { width: 100%; }
+      .sm\:b-col--4 { width: 100%; }
+      .sm\:b-col--3 { width: 100%; }
+    }
+
+    /* Highlighter transparent borders (no overlap visual conflict) */
+    .hl-border-red { border: 2px solid rgba(215,0,15,0.45); }
+    .hl-border-cyan { border: 2px solid rgba(90,215,255,0.45); }
+    .hl-border-teal { border: 2px solid rgba(62,198,184,0.45); }
+    .hl-ring-red { box-shadow: 0 0 0 6px rgba(215,0,15,0.08); }
+    .hl-ring-cyan { box-shadow: 0 0 0 6px rgba(90,215,255,0.08); }
+    .hl-ring-teal { box-shadow: 0 0 0 6px rgba(62,198,184,0.08); }
+
+    /* Footnote style for charts */
+    .chart-footnote {
+      font-size: 12px;
+      line-height: 1.4;
+      color: #A3A7AE;
+      border-top: 1px dashed rgba(255,255,255,0.08);
+      margin-top: 10px;
+      padding-top: 8px;
+      font-family: var(--font-mono, JetBrains Mono, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+    }
+
+    /* Minimal rectangular bars */
+    .bar-track {
+      height: 16px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      transform-origin: left center;
+      background: linear-gradient(90deg, rgba(215,0,15,0.85), rgba(90,215,255,0.85));
+    }
+    .bar-fill.neg {
+      background: linear-gradient(90deg, rgba(215,0,15,0.85), rgba(215,0,15,0.65));
+    }
+
+    /* Thematic background */
+    .bg-grid {
+      background-image:
+        radial-gradient(circle at 10% 10%, rgba(215,0,15,0.08), transparent 40%),
+        radial-gradient(circle at 90% 20%, rgba(90,215,255,0.08), transparent 40%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0));
+    }
+
+    .hero-cn {
+      letter-spacing: -0.5px;
+    }
+    .hero-en {
+      letter-spacing: 0.2px;
+    }
+
+    .data-rect {
+      border-radius: 12px;
+      backdrop-filter: blur(6px);
+    }
+
+    .card-plate {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    }
+
+    .number-xl {
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+  </style>
+</head>
+
+<body class="bg-byd-dark text-white font-sans bg-grid">
+  <!-- Header -->
+  <header class="relative z-10">
+    <div class="max-w-7xl mx-auto px-6 pt-10">
+      <div class="b-grid">
+        <div class="b-row items-end">
+          <div class="b-col b-col--12 md:b-col--12">
+            <div class="flex items-center gap-4">
+              <div class="h-9 w-9 rounded-full bg-byd-red/90 ring-4 ring-byd-red/20"></div>
+              <div>
+                <div class="text-sm uppercase tracking-widest text-byd-accent/90 hero-en">BYD Company Limited</div>
+                <div class="text-xs text-gray-400 hero-en">Stock Code: 002594 • Announcement No.: 2025-058</div>
+              </div>
+            </div>
+            <h1 class="hero-cn mt-6 text-[42px] sm:text-[52px] md:text-[64px] lg:text-[76px] font-extrabold leading-[1.06] text-white">
+              比亚迪股份有限公司 2025 年第三季度报告
+            </h1>
+            <p class="hero-en mt-2 text-sm text-gray-300">Q3 2025 Report — Unaudited</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Disclaimer banner -->
+  <section class="mt-6">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="data-rect card-plate hl-border-cyan hl-ring-cyan p-5 shadow-subtle">
+        <p class="text-sm text-gray-200">
+          本公司及董事会全体成员保证信息披露内容真实、准确、完整，不存在虚假记载、误导性陈述或重大遗漏。
+          报告财务信息未经审计。The Board confirms the truthfulness, accuracy and completeness of disclosure. Financials are unaudited.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPI Section -->
+  <section class="mt-10">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="b-grid">
+        <div class="b-row gap-y-6">
+          <!-- Revenue -->
+          <div class="b-col b-col--6 md:b-col--6">
+            <div class="data-rect card-plate hl-border-red hl-ring-red p-6 shadow-plate">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-xs hero-en uppercase text-gray-300">Revenue (RMB)</div>
+                  <div class="mt-2 text-3xl sm:text-4xl md:text-5xl number-xl font-bold">194,984,598,000</div>
+                  <div class="mt-1 text-gray-400 text-xs">本报告期（Q3）营业收入</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-gray-300 hero-en">YoY</div>
+                  <div class="mt-2 text-lg font-semibold text-byd-red">-3.05%</div>
+                </div>
+              </div>
+              <div class="mt-5 bar-track">
+                <div class="bar-fill neg" style="width: 96.95%;"></div>
+              </div>
+              <div class="chart-footnote">
+                注：同比变动以 100% 为基准；负向区间以红系透明填充表示。Revenue YoY basis = 100%; negative shown by red translucent grad.
+              </div>
+            </div>
+          </div>
+
+          <!-- YTD Revenue -->
+          <div class="b-col b-col--6 md:b-col--6">
+            <div class="data-rect card-plate hl-border-teal hl-ring-teal p-6 shadow-plate">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-xs hero-en uppercase text-gray-300">YTD Revenue (RMB)</div>
+                  <div class="mt-2 text-3xl sm:text-4xl md:text-5xl number-xl font-bold">566,265,546,000</div>
+                  <div class="mt-1 text-gray-400 text-xs">年初至报告期末营业收入</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-gray-300 hero-en">YoY</div>
+                  <div class="mt-2 text-lg font-semibold text-byd-accent">+12.75%</div>
+                </div>
+              </div>
+              <div class="mt-5 bar-track">
+                <div class="bar-fill" style="width: 112.75%; max-width: 100%;"></div>
+              </div>
+              <div class="chart-footnote">
+                注：YTD YoY 增长以 100% 为参考；超过 100% 的宽度在视觉上做截断以避免溢出。Bar caps at container width for clarity.
+              </div>
+            </div>
+          </div>
+
+          <!-- Net Profit -->
+          <div class="b-col b-col--6 md:b-col--6">
+            <div class="data-rect card-plate hl-border-cyan hl-ring-cyan p-6 shadow-plate">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-xs hero-en uppercase text-gray-300">Net Profit Attributable (RMB)</div>
+                  <div class="mt-2 text-3xl sm:text-4xl md:text-5xl number-xl font-bold">7,822,640,000</div>
+                  <div class="mt-1 text-gray-400 text-xs">本报告期归属于母公司股东的净利润</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-gray-300 hero-en">YoY</div>
+                  <div class="mt-2 text-lg font-semibold text-byd-red">-32.60%</div>
+                </div>
+              </div>
+              <div class="mt-5 bar-track">
+                <div class="bar-fill neg" style="width: 67.40%;"></div>
+              </div>
+              <div class="chart-footnote">
+                注：净利润同比下滑以红色矩形表达，透明边框避免高亮覆盖。Negative YoY expressed with red rectangle and transparent border.
+              </div>
+            </div>
+          </div>
+
+          <!-- YTD Net Profit -->
+          <div class="b-col b-col--6 md:b-col--6">
+            <div class="data-rect card-plate hl-border-teal hl-ring-teal p-6 shadow-plate">
+              <div class="flex items中心 justify-between">
+                <div>
+                  <div class="text-xs hero-en uppercase text-gray-300">YTD Net Profit Attrib. (RMB)</div>
+                  <div class="mt-2 text-3xl sm:text-4xl md:text-5xl number-xl font-bold">23,333,173,000</div>
+                  <div class="mt-1 text-gray-400 text-xs">年初至报告期末归属于母公司股东的净利润</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-gray-300 hero-en">YoY</div>
+                  <div class="mt-2 text-lg font-semibold text-byd-red">-7.55%</div>
+                </div>
+              </div>
+              <div class="mt-5 bar-track">
+                <div class="bar-fill neg" style="width: 92.45%;"></div>
+              </div>
+              <div class="chart-footnote">
+                注：YTD 净利同比以 100% 基准线；数值经公开披露口径整理。Data aligned with disclosed YTD figures.
+              </div>
+            </div>
+          </div>
+
+          <!-- EPS -->
+          <div class="b-col b-col--6 md:b-col--6">
+            <div class="data-rect card-plate hl-border-red hl-ring-red p-6 shadow-plate">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-xs hero-en uppercase text-gray-300">EPS (Basic/Diluted)</div>
+                  <div class="mt-2 text-3xl sm:text-4xl md:text-5xl number-xl font-bold">0.85 / 0.85</div>
+                  <div class="mt-1 text-gray-400 text-xs">本报告期每股收益（元/股）</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-gray-300 hero-en">YoY</div>
+                  <div class="mt-2 text-lg font-semibold text-byd-red">-36.09%</div>
+                  <div class="text-[11px] text-gray-400 mt-1">股本调整后口径</div>
+                </div>
+              </div>
+              <div class="chart-footnote">
+                注：2025 年 7 月实施送红股及转增股本，派发后总股本 9,117,197,565 股；EPS 以调整后股数计算。EPS uses adjusted share count post bonus & capital increase.
+              </div>
+            </div>
+          </div>
+
+          <!-- ROE -->
+          <div class="b-col b-col--6 md:b-col--6">
+            <div class="data-rect card-plate hl-border-cyan hl-ring-cyan p-6 shadow-plate">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-xs hero-en uppercase text-gray-300">ROE (Weighted Avg.)</div>
+                  <div class="mt-2 text-3xl sm:text-4xl md:text-5xl number-xl font-bold">3.40% / 10.83%</div>
+                  <div class="mt-1 text-gray-400 text-xs">本期/年初至报告期末加权平均净资产收益率</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-gray-300 hero-en">Change</div>
+                  <div class="mt-2 text-lg font-semibold text-byd-red">-4.08% / -6.32%</div>
+                </div>
+              </div>
+              <div class="chart-footnote">
+                注：ROE 变动为披露口径相对上年同期。ROE change shown vs prior-year comps.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Assets & Equity Snapshot -->
+  <section class="mt-12">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="b-grid">
+        <div class="b-row">
+          <div class="b-col b-col--12">
+            <div class="flex items-end justify-between">
+              <h2 class="hero-cn text-[36px] sm:text-[44px] md:text-[52px] font-extrabold">资产与权益快照</h2>
+              <div class="hero-en text-xs text-gray-400">Balance Sheet Highlights</div>
+            </div>
+          </div>
+
+          <div class="b-col b-col--6 md:b-col--6 mt-6">
+            <div class="data-rect card-plate hl-border-teal hl-ring-teal p-6 shadow-plate">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-xs hero-en uppercase text-gray-300">Total Assets (RMB)</div>
+                  <div class="mt-2 text-3xl sm:text-4xl number-xl font-bold">901,925,091,000</div>
+                  <div class="mt-1 text-gray-400 text-xs">期末总资产</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-gray-300 hero-en">vs FY2024</div>
+                  <div class="mt-2 text-lg font-semibold text-byd-accent">+15.14%</div>
+                </div>
+              </div>
+              <div class="mt-5 bar-track">
+                <div class="bar-fill" style="width: 115.14%; max-width: 100%;"></div>
+              </div>
+              <div class="chart-footnote">
+                注：比较基准为上年度末。Comparison base: FY2024 YE.
+              </div>
+            </div>
+          </div>
+
+          <div class="b-col b-col--6 md:b-col--6 mt-6">
+            <div class="data-rect card-plate hl-border-red hl-ring-red p-6 shadow-plate">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-xs hero-en uppercase text-gray-300">Equity Attrib. to Owners (RMB)</div>
+                  <div class="mt-2 text-3xl sm:text-4xl number-xl font-bold">245,515,455,000</div>
+                  <div class="mt-1 text-gray-400 text-xs">归属于母公司所有者权益</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-gray-300 hero-en">vs FY2024</div>
+                  <div class="mt-2 text-lg font-semibold text-byd-accent">+32.53%</div>
+                </div>
+              </div>
+              <div class="mt-5 bar-track">
+                <div class="bar-fill" style="width: 132.53%; max-width: 100%;"></div>
+              </div>
+              <div class="chart-footnote">
+                注：权益提升受 H 股配售与永续债影响。Equity growth reflects H-share placement and perpetuals.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Big movers (rectangles) -->
+        <div class="b-row mt-8 gap-y-6">
+          <div class="b-col b-col--12">
+            <div class="flex items-end justify-between">
+              <h3 class="hero-cn text-[28px] md:text-[34px] font-bold">科目显著变动</h3>
+              <div class="hero-en text-xs text-gray-400">Key Balance Sheet Movements</div>
+            </div>
+          </div>
+
+          <div class="b-col b-col--3 md:b-col--6 sm:b-col--12">
+            <div class="data-rect card-plate hl-border-cyan hl-ring-cyan p-5 shadow-subtle">
+              <div class="text-sm text-gray-300">在建工程</div>
+              <div class="mt-2 number-xl text-2xl font-bold">+144.51%</div>
+              <div class="mt-3 bar-track">
+                <div class="bar-fill" style="width: 100%;"></div>
+              </div>
+              <div class="mt-2 chart-footnote">资产投入增加所致</div>
+            </div>
+          </div>
+
+          <div class="b-col b-col--3 md:b-col--6 sm:b-col--12">
+            <div class="data-rect card-plate hl-border-teal hl-ring-teal p-5 shadow-subtle">
+              <div class="text-sm text-gray-300">开发支出</div>
+              <div class="mt-2 number-xl text-2xl font-bold">+519.65%</div>
+              <div class="mt-3 bar-track">
+                <div class="bar-fill" style="width: 100%;"></div>
+              </div>
+              <div class="mt-2 chart-footnote">内部研发投入增加</div>
+            </div>
+          </div>
+
+          <div class="b-col b-col--3 md:b-col--6 sm:b-col--12">
+            <div class="data-rect card-plate hl-border-red hl-ring-red p-5 shadow-subtle">
+              <div class="text-sm text-gray-300">长期借款</div>
+              <div class="mt-2 number-xl text-2xl font-bold">+641.10%</div>
+              <div class="mt-3 bar-track">
+                <div class="bar-fill" style="width: 100%;"></div>
+              </div>
+              <div class="mt-2 chart-footnote">银行借款增加</div>
+            </div>
+          </div>
+
+          <div class="b-col b-col--3 md:b-col--6 sm:b-col--12">
+            <div class="data-rect card-plate hl-border-cyan hl-ring-cyan p-5 shadow-subtle">
+              <div class="text-sm text-gray-300">其他流动负债</div>
+              <div class="mt-2 number-xl text-2xl font-bold">+300.18%</div>
+              <div class="mt-3 bar-track">
+                <div class="bar-fill" style="width: 100%;"></div>
+              </div>
+              <div class="mt-2 chart-footnote">本期发行超短期融资券</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cash Flow Summary -->
+  <section class="mt-12">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="b-grid">
+        <div class="b-row items-end">
+          <div class="b-col b-col--12">
+            <h2 class="hero-cn text-[34px] font-extrabold">现金流概要</h2>
+            <div class="hero-en text-xs text-gray-400">Cash Flow Highlights (YTD)</div>
+          </div>
+        </div>
+
+        <div class="b-row mt-6 gap-y-6">
+          <div class="b-col b-col--4 md:b-col--6 sm:b-col--12">
+            <div class="data-rect card-plate hl-border-teal hl-ring-teal p-6 shadow-subtle">
+              <div class="text-sm text-gray-300">经营活动现金流净额</div>
+              <div class="mt-2 number-xl text-2xl font-bold">40,845,498,000</div>
+              <div class="text-xs text-gray-400 mt-1">同比 -27.42%</div>
+              <div class="mt-3 bar-track"><div class="bar-fill neg" style="width: 72.58%;"></div></div>
+              <div class="chart-footnote">销售回款与税费变化影响</div>
+            </div>
+          </div>
+          <div class="b-col b-col--4 md:b-col--6 sm:b-col--12">
+            <div class="data-rect card-plate hl-border-red hl-ring-red p-6 shadow-subtle">
+              <div class="text-sm text-gray-300">投资活动现金流净额</div>
+              <div class="mt-2 number-xl text-2xl font-bold">-127,571,344,000</div>
+              <div class="text-xs text-gray-400 mt-1">同比 47.23%</div>
+              <div class="mt-3 bar-track"><div class="bar-fill neg" style="width: 52.77%;"></div></div>
+              <div class="chart-footnote">固定资产与长期资产购建现金增加</div>
+            </div>
+          </div>
+          <div class="b-col b-col--4 md:b-col--12 sm:b-col--12">
+            <div class="data-rect card-plate hl-border-cyan hl-ring-cyan p-6 shadow-subtle">
+              <div class="text-sm text-gray-300">筹资活动现金流净额</div>
+              <div class="mt-2 number-xl text-2xl font-bold">101,662,706,000</div>
+              <div class="text-xs text-gray-400 mt-1">同比 +949.92%</div>
+              <div class="mt-3 bar-track"><div class="bar-fill" style="width: 100%;"></div></div>
+              <div class="chart-footnote">H 股配售、借款与债券发行收款增加</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Framer Motion: 非经常性损益（Interactive Rectangles） -->
+  <section class="mt-12">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex items-end justify-between">
+        <h2 class="hero-cn text-[34px] font-extrabold">非经常性损益（矩形交互）</h2>
+        <div class="hero-en text-xs text-gray-400">Non-recurring Items — Interactive</div>
+      </div>
+
+      <div id="motion-panel" class="mt-6"></div>
+
+      <div class="chart-footnote">
+        注：展示本报告期金额与年初至报告期末金额（单位：元）。数值以披露条目聚合；交互矩形支持展开/收起。
+      </div>
+    </div>
+  </section>
+
+  <!-- Shareholder Snapshot -->
+  <section class="mt-12 mb-16">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex items-end justify-between">
+        <h2 class="hero-cn text-[34px] font-extrabold">股东结构（节选）</h2>
+        <div class="hero-en text-xs text-gray-400">Shareholders — Top Lines</div>
+      </div>
+
+      <div class="b-grid mt-6">
+        <div class="b-row gap-y-6">
+          <div class="b-col b-col--3 md:b-col--6 sm:b-col--12">
+            <div class="data-rect card-plate hl-border-cyan hl-ring-cyan p-5">
+              <div class="text-sm text-gray-300">HKSCC NOMINEES LIMITED</div>
+              <div class="mt-2 text-lg font-bold number-xl">3,681,484,673 股</div>
+              <div class="text-xs text-gray-400">持股比例约 40.38%</div>
+            </div>
+          </div>
+          <div class="b-col b-col--3 md:b-col--6 sm:b-col--12">
+            <div class="data-rect card-plate hl-border-teal hl-ring-teal p-5">
+              <div class="text-sm text-gray-300">王传福</div>
+              <div class="mt-2 text-lg font-bold number-xl">1,540,871,550 股</div>
+              <div class="text-xs text-gray-400">持股比例约 16.90%</div>
+            </div>
+          </div>
+          <div class="b-col b-col--3 md:b-col--6 sm:b-col--12">
+            <div class="data-rect card-plate hl-border-red hl-ring-red p-5">
+              <div class="text-sm text-gray-300">吕向阳</div>
+              <div class="mt-2 text-lg font-bold number-xl">717,685,860 股</div>
+              <div class="text-xs text-gray-400">持股比例约 7.87%</div>
+            </div>
+          </div>
+          <div class="b-col b-col--3 md:b-col--6 sm:b-col--12">
+            <div class="data-rect card-plate hl-border-cyan hl-ring-cyan p-5">
+              <div class="text-sm text-gray-300">融捷投资控股集团</div>
+              <div class="mt-2 text-lg font-bold number-xl">465,448,806 股</div>
+              <div class="text-xs text-gray-400">持股比例约 5.11%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-footnote">
+        注：公司于 2025 年 7 月实施权益分派，总股本增至 9,117,197,565 股。H 股每手由 500 股更改为 100 股，2025 年 9 月 19 日生效。
+      </div>
+    </div>
+  </section>
+
+  <!-- GSAP animations -->
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Hero entrance
+    gsap.from("header .hero-cn", {
+      y: 18, opacity: 0, duration: 0.8, ease: "power3.out"
+    });
+    gsap.from("header .hero-en", {
+      y: 8, opacity: 0, duration: 0.8, delay: 0.1, ease: "power3.out"
+    });
+
+    // Card rise on scroll
+    gsap.utils.toArray(".card-plate").forEach((card, i) => {
+      gsap.from(card, {
+        y: 24, opacity: 0,
+        duration: 0.8, delay: i * 0.04,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: card,
+          start: "top 85%",
+          toggleActions: "play none none reverse"
+        }
+      });
+    });
+
+    // Bar fill animation
+    gsap.utils.toArray(".bar-fill").forEach((bar) => {
+      const w = bar.style.width || "100%";
+      gsap.from(bar, {
+        width: "0%",
+        duration: 1.0,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: bar,
+          start: "top 90%",
+          toggleActions: "play none none reverse"
+        }
+      });
+    });
+  </script>
+
+  <!-- Framer Motion component (non-recurring items) -->
+  <script>
+    (function () {
+      const React = window.React;
+      const ReactDOM = window.ReactDOM;
+      const { motion, AnimatePresence } = window.framerMotion || {};
+
+      if (!React || !ReactDOM || !motion) {
+        const container = document.getElementById('motion-panel');
+        if (container) {
+          container.innerHTML = '<div class="text-sm text-red-400">Framer Motion 加载失败，交互模块未初始化。</div>';
+        }
+        return;
+      }
+
+      const items = [
+        { key: 'gov', labelCN: '政府补助（本期）', labelEN: 'Gov Grants (Q3)', value: 981027000, color: 'rgba(90,215,255,0.85)', border: 'rgba(90,215,255,0.45)' },
+        { key: 'fv', labelCN: '公允价值变动及投资收益（本期）', labelEN: 'FV & Invest Gains (Q3)', value: 780579000, color: 'rgba(215,0,15,0.85)', border: 'rgba(215,0,15,0.45)' },
+        { key: 'other', labelCN: '其他营业外（本期）', labelEN: 'Other Non-operating (Q3)', value: -102897000, color: 'rgba(255,255,255,0.55)', border: 'rgba(255,255,255,0.25)' },
+        { key: 'asset', labelCN: '非流动资产处置（本期）', labelEN: 'Asset Disposal (Q3)', value: -306279000, color: 'rgba(255,255,255,0.35)', border: 'rgba(255,255,255,0.18)' },
+        { key: 'tax', labelCN: '所得税影响（本期）', labelEN: 'Tax Impact (Q3)', value: -211970000, color: 'rgba(255,255,255,0.35)', border: 'rgba(255,255,255,0.18)' },
+        { key: 'minor', labelCN: '少数股东权益影响（本期）', labelEN: 'Minority Impact (Q3)', value: -208571000, color: 'rgba(255,255,255,0.35)', border: 'rgba(255,255,255,0.18)' },
+      ];
+      const totalQ3 = 931889000; // 合计（本期）
+      const totalYTD = 2842681000; // 合计（年初至期末）
+
+      function formatRMB(n) {
+        return (n).toLocaleString('zh-Hans-CN');
+      }
+
+      const Panel = () => {
+        const [expanded, setExpanded] = React.useState(true);
+        const maxAbs = Math.max(...items.map(i => Math.abs(i.value)));
+        return React.createElement('div', { className: 'data-rect card-plate hl-border-cyan hl-ring-cyan p-6 shadow-plate' },
+          React.createElement('div', { className: 'flex items-center justify-between' },
+            React.createElement('div', null,
+              React.createElement('div', { className: 'text-sm text-gray-300' }, '非经常性损益拆解（本期）'),
+              React.createElement('div', { className: 'mt-1 text-xs hero-en text-gray-400' }, 'Non-recurring Items — Q3 breakdown')
+            ),
+            React.createElement('button', {
+              className: 'text-xs px-3 py-1 rounded bg白/5 hover:bg白/10 transition',
+              onClick: () => setExpanded(!expanded)
+            }, expanded ? '收起' : '展开')
+          ),
+          React.createElement('div', { className: 'mt-4 space-y-3' },
+            React.createElement(AnimatePresence, null,
+              expanded && items.map((i) =>
+                React.createElement(motion.div, {
+                  key: i.key,
+                  initial: { opacity: 0, y: 8 },
+                  animate: { opacity: 1, y: 0 },
+                  exit: { opacity: 0, y: -8 },
+                  transition: { duration: 0.3 }
+                },
+                  React.createElement('div', { className: 'flex items-center gap-3' },
+                    React.createElement('div', { className: 'flex-1' },
+                      React.createElement('div', { className: 'flex items-center justify-between' },
+                        React.createElement('div', { className: 'text-sm text-gray-200' }, i.labelCN),
+                        React.createElement('div', { className: 'text-[11px] hero-en text-gray-400' }, i.labelEN)
+                      ),
+                      React.createElement('div', { className: 'mt-2 bar-track', style: { border: `2px solid ${i.border}`, borderRadius: '10px' } },
+                        React.createElement(motion.div, {
+                          className: `bar-fill ${i.value < 0 ? 'neg' : ''}`,
+                          initial: { width: '0%' },
+                          animate: { width: `${Math.min(100, Math.round(Math.abs(i.value) / maxAbs * 100))}%` },
+                          transition: { duration: 0.6, ease: 'easeOut' },
+                          style: { background: i.value >= 0 ? `linear-gradient(90deg, ${i.color}, rgba(90,215,255,0.85))` : `linear-gradient(90deg, ${i.color}, rgba(215,0,15,0.65))` }
+                        })
+                      )
+                    ),
+                    React.createElement('div', { className: 'w-40 text-right number-xl text-sm' }, (i.value >= 0 ? '+' : '') + formatRMB(i.value))
+                  )
+                )
+              )
+            )
+          ),
+          React.createElement('div', { className: 'mt-4 p-3 rounded bg白/5 flex items-center justify-between' },
+            React.createElement('div', null,
+              React.createElement('div', { className: 'text-xs text-gray-300' }, '合计（本期/Q3）'),
+              React.createElement('div', { className: 'text-lg font-bold number-xl' }, formatRMB(totalQ3))
+            ),
+            React.createElement('div', null,
+              React.createElement('div', { className: 'text-xs text-gray-300' }, '合计（年初至报告期末/YTD）'),
+              React.createElement('div', { className: 'text-lg font-bold number-xl' }, formatRMB(totalYTD))
+            )
+          )
+        );
+      };
+
+      ReactDOM.createRoot(document.getElementById('motion-panel')).render(React.createElement(Panel));
+    })();
+  </script>
+
+  <!-- Accessibility and final notes -->
+  <footer class="mt-8 border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-6 py-8 text-xs text-gray-400">
+      数据来源：比亚迪股份有限公司 2025 年第三季度报告（未经审计）。页面采用 Bemto Grid 布局、GSAP 动效与 Framer Motion 交互，基于 HTML5 与 TailwindCSS 开发，响应式适配移动与桌面端。
+    </div>
+  </footer>
+</body>
+</html>
