@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>代办清单</title>
+  <style>
+    :root {
+      --bg: #f7f7f9;
+      --card: #ffffff;
+      --text: #222;
+      --muted: #666;
+      --primary: #3a7afe;
+      --border: #e5e7eb;
+      --danger: #ef4444;
+      --success: #16a34a;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+        "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", Arial, sans-serif;
+      background: linear-gradient(120deg, #f0f4ff, #f8fafc 60%, #fff);
+      color: var(--text);
+    }
+    .app {
+      max-width: 720px;
+      margin: 6vh auto;
+      padding: 24px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 6px 25px rgba(0,0,0,.04);
+      overflow: hidden;
+    }
+    .header {
+      padding: 20px 20px 0 20px;
+    }
+    .title {
+      margin: 0 0 12px 0;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .add-form {
+      display: flex;
+      gap: 10px;
+      margin: 8px 0 16px;
+    }
+    .add-input {
+      flex: 1;
+      height: 44px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+      transition: border-color .15s ease, box-shadow .15s ease;
+      background: #fff;
+    }
+    .add-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(58,122,254,.12);
+    }
+    .add-btn {
+      height: 44px;
+      padding: 0 16px;
+      border: none;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: .2px;
+      cursor: pointer;
+      transition: transform .02s ease, filter .12s ease;
+      white-space: nowrap;
+    }
+    .add-btn:active { transform: translateY(1px); }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px 14px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filters {
+      display: inline-flex;
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 4px;
+      gap: 4px;
+    }
+    .filters button {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .filters button.active {
+      background: #fff;
+      color: var(--primary);
+      box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    }
+    .stats {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .list {
+      list-style: none;
+      margin: 0;
+      padding: 8px 6px;
+      max-height: 58vh;
+      overflow: auto;
+    }
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      transition: background .12s ease;
+    }
+    .item + .item { margin-top: 2px; }
+    .item:hover { background: #f8fafc; }
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--success);
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+    .text {
+      flex: 1 1 auto;
+      line-height: 1.4;
+      word-break: break-word;
+      user-select: text;
+    }
+    .completed .text {
+      color: #9ca3af;
+      text-decoration: line-through;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+    .del-btn {
+      border: none;
+      background: #fee2e2;
+      color: var(--danger);
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 28px 10px 34px;
+    }
+    .footer {
+      padding: 8px 18px 16px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+    @media (max-width: 540px) {
+      .app { padding: 14px; }
+      .toolbar { padding: 0 14px 14px; }
+      .add-form { flex-direction: column; }
+      .add-btn { width: 100%; }
+      .list { max-height: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" aria-labelledby="app-title">
+    <section class="card" role="application">
+      <div class="header">
+        <h1 id="app-title" class="title">代办清单</h1>
+        <form id="addForm" class="add-form" autocomplete="off">
+          <input id="todoInput" class="add-input" type="text" maxlength="200"
+                 placeholder="输入待办事项，按回车或点击添加…" aria-label="输入待办事项" />
+          <button class="add-btn" type="submit" aria-label="添加">添加</button>
+        </form>
+      </div>
+
+      <div class="toolbar" aria-label="筛选工具栏">
+        <div class="filters" role="tablist" aria-label="筛选">
+          <button type="button" role="tab" data-filter="all" aria-selected="true" class="active">全部</button>
+          <button type="button" role="tab" data-filter="active" aria-selected="false">未完成</button>
+          <button type="button" role="tab" data-filter="completed" aria-selected="false">已完成</button>
+        </div>
+        <div class="stats" id="stats" aria-live="polite"></div>
+      </div>
+
+      <ul id="todoList" class="list" aria-label="待办列表"></ul>
+
+      <div id="emptyState" class="empty" hidden>暂无内容，添加你的第一条待办吧！</div>
+
+      <div class="footer">
+        数据自动本地保存，刷新页面后仍会保留。
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // 本地存储键
+    const STORAGE_KEY = 'todo_items_v1';
+    const FILTER_KEY = 'todo_filter_v1';
+
+    const state = {
+      todos: [],
+      filter: 'all' // all | active | completed
+    };
+
+    // 工具：生成唯一ID
+    const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+    // 安全读取本地存储
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            state.todos = parsed.filter(x =>
+              x && typeof x.id === 'string' &&
+              typeof x.text === 'string' &&
+              typeof x.completed === 'boolean'
+            );
+          }
+        }
+        const f = localStorage.getItem(FILTER_KEY);
+        if (['all', 'active', 'completed'].includes(f)) {
+          state.filter = f;
+        }
+      } catch (e) {
+        // 如果解析失败，忽略并使用默认值
+        state.todos = [];
+        state.filter = 'all';
+      }
+    }
+
+    // 写入本地存储
+    function persist() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.todos));
+        localStorage.setItem(FILTER_KEY, state.filter);
+      } catch (e) {
+        console.warn('保存本地数据失败：', e);
+      }
+    }
+
+    // 过滤
+    function getVisibleTodos() {
+      if (state.filter === 'active') return state.todos.filter(t => !t.completed);
+      if (state.filter === 'completed') return state.todos.filter(t => t.completed);
+      return state.todos;
+    }
+
+    // 渲染统计信息
+    function renderStats() {
+      const total = state.todos.length;
+      const remaining = state.todos.filter(t => !t.completed).length;
+      const completed = total - remaining;
+      const stats = document.getElementById('stats');
+      stats.textContent = `全部 ${total} · 未完成 ${remaining} · 已完成 ${completed}`;
+    }
+
+    // 渲染筛选按钮状态
+    function renderFilters() {
+      const group = document.querySelector('.filters');
+      const buttons = group.querySelectorAll('button[data-filter]');
+      buttons.forEach(btn => {
+        const active = btn.dataset.filter === state.filter;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-selected', String(active));
+      });
+    }
+
+    // 渲染列表
+    function renderList() {
+      const list = document.getElementById('todoList');
+      const empty = document.getElementById('emptyState');
+      const todos = getVisibleTodos();
+
+      list.innerHTML = '';
+
+      if (todos.length === 0) {
+        empty.hidden = false;
+        return;
+      } else {
+        empty.hidden = true;
+      }
+
+      const frag = document.createDocumentFragment();
+
+      todos.forEach(todo => {
+        const li = document.createElement('li');
+        li.className = 'item' + (todo.completed ? ' completed' : '');
+        li.dataset.id = todo.id;
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'checkbox';
+        checkbox.checked = todo.completed;
+        checkbox.setAttribute('aria-label', todo.completed ? '取消完成' : '标记完成');
+
+        const text = document.createElement('div');
+        text.className = 'text';
+        text.textContent = todo.text;
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'del-btn';
+        delBtn.textContent = '删除';
+        delBtn.setAttribute('aria-label', '删除待办');
+
+        actions.appendChild(delBtn);
+        li.appendChild(checkbox);
+        li.appendChild(text);
+        li.appendChild(actions);
+
+        frag.appendChild(li);
+      });
+
+      list.appendChild(frag);
+    }
+
+    // 总渲染
+    function render() {
+      renderFilters();
+      renderStats();
+      renderList();
+    }
+
+    // 增加待办
+    function addTodo(text) {
+      const t = text.trim();
+      if (!t) return;
+      state.todos.unshift({
+        id: uid(),
+        text: t,
+        completed: false,
+        createdAt: Date.now()
+      });
+      persist();
+      render();
+    }
+
+    // 切换完成状态
+    function toggleTodo(id) {
+      const item = state.todos.find(t => t.id === id);
+      if (!item) return;
+      item.completed = !item.completed;
+      persist();
+      render();
+    }
+
+    // 删除待办
+    function deleteTodo(id) {
+      const idx = state.todos.findIndex(t => t.id === id);
+      if (idx !== -1) {
+        state.todos.splice(idx, 1);
+        persist();
+        render();
+      }
+    }
+
+    // 切换筛选
+    function setFilter(filter) {
+      if (!['all', 'active', 'completed'].includes(filter)) return;
+      state.filter = filter;
+      persist();
+      render();
+    }
+
+    // 初始化事件
+    function bindEvents() {
+      const form = document.getElementById('addForm');
+      const input = document.getElementById('todoInput');
+      const list = document.getElementById('todoList');
+      const filters = document.querySelector('.filters');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        addTodo(input.value);
+        input.value = '';
+        input.focus();
+      });
+
+      list.addEventListener('change', (e) => {
+        const target = e.target;
+        if (target.matches('input[type="checkbox"].checkbox')) {
+          const li = target.closest('.item');
+          if (li?.dataset.id) {
+            toggleTodo(li.dataset.id);
+          }
+        }
+      });
+
+      list.addEventListener('click', (e) => {
+        const target = e.target;
+        if (target.matches('button.del-btn')) {
+          const li = target.closest('.item');
+          if (li?.dataset.id) {
+            deleteTodo(li.dataset.id);
+          }
+        }
+      });
+
+      filters.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-filter]');
+        if (!btn) return;
+        setFilter(btn.dataset.filter);
+      });
+
+      // 支持 Ctrl/Cmd+Enter 快速添加
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          if (document.activeElement !== input && input.value.trim()) {
+            addTodo(input.value);
+            input.value = '';
+          }
+        }
+      });
+    }
+
+    // 启动
+    (function init() {
+      loadState();
+      bindEvents();
+      render();
+    })();
+  </script>
+</body>
+</html>
